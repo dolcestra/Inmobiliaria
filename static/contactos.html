@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contactos · Inmobiliaria Reyna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="/static/logo-hq.png">
+</head>
+<body>
+
+<header>
+  <a href="/" class="header-logo">
+    <img src="/static/logo-hq.png" alt="Reyna Inmobiliaria" class="header-logo-icon">
+    <div class="header-logo-text">
+      <span class="brand-name">REYNA</span>
+      <span class="brand-sub">Inmobiliaria</span>
+    </div>
+  </a>
+  <nav class="header-nav">
+    <a href="/">Generar</a>
+    <a href="/propiedades">Propiedades</a>
+    <a href="/contactos" class="active">Contactos</a>
+    <a href="/web" target="_blank" style="color:var(--accent)">🌐 Web</a>
+  </nav>
+</header>
+
+<main class="crm-main">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <h1 style="font-family:var(--font-heading);font-size:28px;color:var(--text-primary)">Agenda de Contactos</h1>
+    <button class="btn-gold" id="btnNewContacto" style="padding:10px 20px;font-size:14px;border:none;cursor:pointer;border-radius:var(--radius);font-family:inherit">+ Nuevo contacto</button>
+  </div>
+
+  <!-- Search -->
+  <section class="crm-toolbar">
+    <div class="search-box" style="flex:1">
+      <input type="text" id="searchContactos" placeholder="Buscar por nombre, teléfono o email...">
+    </div>
+  </section>
+
+  <div class="crm-count" id="contactosCount"></div>
+
+  <!-- Grid -->
+  <div class="contactos-grid" id="contactosGrid"></div>
+
+  <!-- Empty -->
+  <div class="crm-empty" id="contactosEmpty" style="display:none">
+    <p>No hay contactos registrados aún.</p>
+    <p style="font-size:13px;color:var(--text-muted)">Los contactos se crean automáticamente al registrar un interesado en una propiedad.</p>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="contactoModal" style="display:none">
+    <div class="modal-content" id="contactoModalContent"></div>
+  </div>
+
+  <!-- New/Edit Modal -->
+  <div class="modal-overlay" id="newContactoModal" style="display:none">
+    <div class="modal-content" style="max-width:600px">
+      <button class="modal-close" onclick="document.getElementById('newContactoModal').style.display='none'">&times;</button>
+      <h2 class="modal-title" id="nc-modal-title">Nuevo Contacto</h2>
+      <input type="hidden" id="nc-edit-id" value="">
+
+      <div style="display:grid;gap:16px;margin-top:16px">
+        <!-- Datos personales -->
+        <div class="card" style="margin:0">
+          <div class="card-header"><span class="icon">👤</span><h2>Datos personales</h2></div>
+          <div class="card-body">
+            <div style="display:grid;gap:10px">
+              <div class="field">
+                <label>Nombre *</label>
+                <input type="text" id="nc-nombre" placeholder="Nombre completo">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="field">
+                  <label>Teléfono</label>
+                  <input type="tel" id="nc-telefono" placeholder="600 000 000">
+                </div>
+                <div class="field">
+                  <label>Email</label>
+                  <input type="email" id="nc-email" placeholder="email@ejemplo.com">
+                </div>
+              </div>
+              <div class="field">
+                <label>Notas</label>
+                <textarea id="nc-notas" rows="2" placeholder="Notas sobre este contacto..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preferencias de busqueda -->
+        <div class="card" style="margin:0">
+          <div class="card-header"><span class="icon">🔍</span><h2>¿Qué busca?</h2><span class="badge">Matching automático</span></div>
+          <div class="card-body">
+            <div style="display:grid;gap:10px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="field">
+                  <label>Operación</label>
+                  <select id="nc-pref-operacion">
+                    <option value="">Cualquiera</option>
+                    <option value="Venta">Comprar</option>
+                    <option value="Alquiler">Alquilar</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Tipo de propiedad</label>
+                  <select id="nc-pref-tipo">
+                    <option value="">Cualquiera</option>
+                    <option value="Piso">Piso</option>
+                    <option value="Apartamento">Apartamento</option>
+                    <option value="Casa / Chalet">Casa / Chalet</option>
+                    <option value="Ático">Ático</option>
+                    <option value="Dúplex">Dúplex</option>
+                    <option value="Estudio">Estudio</option>
+                    <option value="Finca">Finca</option>
+                    <option value="Local comercial">Local comercial</option>
+                    <option value="Terreno">Terreno</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label>Ciudad preferida</label>
+                <input type="text" id="nc-pref-ciudad" placeholder="Ej: Zamora">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="field">
+                  <label>Precio mínimo (€)</label>
+                  <input type="number" id="nc-pref-precio-min" placeholder="50.000" min="0">
+                </div>
+                <div class="field">
+                  <label>Precio máximo (€)</label>
+                  <input type="number" id="nc-pref-precio-max" placeholder="300.000" min="0">
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+                <div class="field">
+                  <label>Habitaciones mín.</label>
+                  <select id="nc-pref-hab">
+                    <option value="">—</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                    <option value="5">5+</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Baños mín.</label>
+                  <select id="nc-pref-banos">
+                    <option value="">—</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Superficie mín. (m²)</label>
+                  <input type="number" id="nc-pref-sup" placeholder="60" min="0">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-gold" id="nc-save" style="border:none;cursor:pointer;font-family:inherit;padding:14px;font-size:15px;font-weight:700;border-radius:var(--radius)">Guardar contacto</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast">Hecho</div>
+
+<script src="/static/shared.js"></script>
+<script src="/static/contactos.js"></script>
+</body>
+</html>

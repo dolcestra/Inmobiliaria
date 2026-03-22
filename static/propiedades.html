@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propiedades · Inmobiliaria Reyna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="/static/logo-hq.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+
+<header>
+  <a href="/" class="header-logo">
+    <img src="/static/logo-hq.png" alt="Reyna Inmobiliaria" class="header-logo-icon">
+    <div class="header-logo-text">
+      <span class="brand-name">REYNA</span>
+      <span class="brand-sub">Inmobiliaria</span>
+    </div>
+  </a>
+  <nav class="header-nav">
+    <a href="/">Generar</a>
+    <a href="/propiedades" class="active">Propiedades</a>
+    <a href="/contactos">Contactos</a>
+    <a href="/web" target="_blank" style="color:var(--accent)">🌐 Web</a>
+  </nav>
+</header>
+
+<main class="crm-main">
+
+  <!-- Toolbar: search + filters -->
+  <section class="crm-toolbar">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Buscar por título, ciudad, dirección...">
+    </div>
+    <div class="crm-filters">
+      <select id="filterTipo">
+        <option value="">Todos los tipos</option>
+        <option value="Piso">Piso</option>
+        <option value="Apartamento">Apartamento</option>
+        <option value="Casa / Chalet">Casa / Chalet</option>
+        <option value="Ático">Ático</option>
+        <option value="Dúplex">Dúplex</option>
+        <option value="Estudio">Estudio</option>
+        <option value="Finca">Finca</option>
+        <option value="Local comercial">Local comercial</option>
+        <option value="Terreno">Terreno</option>
+      </select>
+      <select id="filterOperacion">
+        <option value="">Venta y Alquiler</option>
+        <option value="Venta">Venta</option>
+        <option value="Alquiler">Alquiler</option>
+      </select>
+      <select id="filterEstado">
+        <option value="">Todos los estados</option>
+        <option value="activo">Activo</option>
+        <option value="retirado">Retirado</option>
+        <option value="vendido">Vendido</option>
+        <option value="alquilado">Alquilado</option>
+      </select>
+      <input type="number" id="precioMin" placeholder="Precio min €">
+      <input type="number" id="precioMax" placeholder="Precio max €">
+    </div>
+  </section>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div class="crm-count" id="crmCount" style="margin:0"></div>
+    <button class="btn-estado" id="toggleMapBtn" onclick="toggleMapView()" style="font-size:12px">🗺️ Ver mapa</button>
+  </div>
+
+  <!-- Map view -->
+  <div id="crmMapWrap" style="display:none;margin-bottom:20px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border-light)">
+    <div id="crmMap" style="height:450px"></div>
+  </div>
+
+  <!-- Grid -->
+  <div class="crm-grid" id="crmGrid"></div>
+
+  <!-- Empty state -->
+  <div class="crm-empty" id="crmEmpty" style="display:none">
+    <p>No hay propiedades guardadas aún.</p>
+    <a href="/" class="btn-gold">Generar tu primera propiedad</a>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detailModal" style="display:none">
+    <div class="modal-content" id="detailContent"></div>
+  </div>
+
+</main>
+
+<div id="toast">Copiado al portapapeles</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/shared.js"></script>
+<script src="/static/crm.js"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propiedad · Inmobiliaria Reyna</title>
+  <link rel="icon" type="image/png" href="/static/logo-hq.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #1a6b5a; --accent-light: #2e9b89; --accent-pale: #e6f5f1;
+      --bg: #faf8f5; --card: #ffffff; --surface: #f3f0ec;
+      --border: #e5e0d8; --border-light: #ede9e3;
+      --text-primary: #2c2420; --text-secondary: #6b6058; --text-muted: #9c9389;
+      --white: #ffffff; --radius: 8px; --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.06);
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text-primary); font-size: 15px; line-height: 1.6; }
+
+    .web-header {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 32px; display: flex; align-items: center; height: 72px;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .web-logo { font-family: var(--font-heading); font-size: 26px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+    .web-logo span { color: var(--accent); }
+    .web-header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+    .btn-back {
+      font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none;
+      padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius); transition: all .2s;
+    }
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+    .detail-main { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* Gallery */
+    .gallery { margin-bottom: 28px; }
+    .gallery-main {
+      width: 100%; height: 400px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px;
+      background: var(--surface) no-repeat center / cover;
+    }
+    .gallery-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+    .gallery-thumb {
+      height: 70px; border-radius: var(--radius); background: var(--surface) no-repeat center / cover;
+      cursor: pointer; border: 2px solid transparent; transition: all .2s;
+    }
+    .gallery-thumb:hover, .gallery-thumb.active { border-color: var(--accent); }
+
+    /* Info */
+    .detail-header { margin-bottom: 24px; }
+    .detail-badge {
+      display: inline-block; background: var(--accent); color: var(--white);
+      font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
+    }
+    .detail-title { font-family: var(--font-heading); font-size: 30px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .detail-location { font-size: 15px; color: var(--text-secondary); }
+    .detail-price {
+      font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--accent);
+      margin: 16px 0 24px;
+    }
+
+    /* Data grid */
+    .detail-data {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;
+      margin-bottom: 28px;
+    }
+    .detail-data-item {
+      background: var(--white); border: 1px solid var(--border-light); border-radius: var(--radius);
+      padding: 14px; text-align: center;
+    }
+    .detail-data-value { font-size: 22px; font-weight: 700; color: var(--accent); display: block; }
+    .detail-data-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .3px; }
+
+    /* Description */
+    .detail-section { margin-bottom: 24px; }
+    .detail-section-title {
+      font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase;
+      letter-spacing: .5px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light);
+    }
+    .detail-section-content { font-size: 15px; color: var(--text-primary); line-height: 1.8; white-space: pre-wrap; }
+
+    /* Contact CTA */
+    .contact-cta {
+      background: var(--white); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+      padding: 28px; text-align: center; box-shadow: var(--shadow);
+    }
+    .contact-cta h3 { font-family: var(--font-heading); font-size: 20px; margin-bottom: 8px; }
+    .contact-cta p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+    .contact-cta .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border-radius: var(--radius); font-size: 15px; font-weight: 700;
+      text-decoration: none; transition: all .2s; font-family: inherit; border: none; cursor: pointer;
+    }
+    .btn-cta-phone { background: var(--accent); color: var(--white); }
+    .btn-cta-phone:hover { background: var(--accent-light); }
+    .btn-cta-whatsapp { background: #25d366; color: var(--white); }
+    .btn-cta-whatsapp:hover { background: #1fb855; }
+    .btn-cta-email { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-cta-email:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Footer */
+    .web-footer {
+      background: var(--text-primary); color: rgba(255,255,255,.6); text-align: center;
+      padding: 32px 24px; font-size: 13px;
+    }
+    .web-footer strong { color: var(--white); font-family: var(--font-heading); font-size: 16px; }
+    .web-footer span { color: var(--accent-light); }
+
+    @media (max-width: 768px) {
+      .web-header { padding: 0 16px; }
+      .gallery-main { height: 260px; }
+      .detail-title { font-size: 24px; }
+      .detail-price { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="web-header">
+  <a class="web-logo" href="/web" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+    <img src="/static/logo-hq.png" alt="" style="width:46px;height:46px;object-fit:cover;object-position:center 15%;border-radius:6px">
+    <div style="line-height:1.1"><span style="font-family:var(--font-heading);font-size:24px;font-weight:700;color:var(--accent);display:block;letter-spacing:-.5px">REYNA</span><span style="font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase">Inmobiliaria</span></div>
+  </a>
+  <div class="web-header-right">
+    <a class="btn-back" href="/web">← Volver a propiedades</a>
+  </div>
+</header>
+
+<main class="detail-main" id="detailMain">
+  <div style="text-align:center;padding:60px;color:var(--text-muted)">Cargando propiedad...</div>
+</main>
+
+<footer class="web-footer">
+  <strong>Reyna <span>Inmobiliaria</span></strong><br>
+  <span style="color:rgba(255,255,255,.5);font-size:12px;margin-top:4px;display:inline-block">C/ Flores de San Torcuato, 10 · 49014 Zamora · 📞 980 53 35 36 · adm77@telefonica.net</span>
+</footer>
+
+<script>
+  function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function fmtPrice(p) { const n = parseInt(p); return isNaN(n) ? (p||'—') : n.toLocaleString('es-ES'); }
+
+  async function loadDetail() {
+    const id = window.location.pathname.split('/').pop();
+    try {
+      const res = await fetch(`/api/web/propiedades/${id}`);
+      if (!res.ok) throw new Error('No encontrada');
+      const p = await res.json();
+      document.title = `${p.titulo || p.tipo_propiedad} · Inmobiliaria Reyna`;
+      renderDetail(p);
+    } catch {
+      document.getElementById('detailMain').innerHTML = '<div style="text-align:center;padding:60px"><h2 style="color:var(--text-primary);font-family:var(--font-heading)">Propiedad no disponible</h2><p style="color:var(--text-muted);margin-top:8px">Esta propiedad ya no está activa o no existe.</p><a href="/web" style="color:var(--accent);margin-top:16px;display:inline-block">← Volver a propiedades</a></div>';
+    }
+  }
+
+  function renderDetail(p) {
+    const fotos = p.fotos || [];
+    const mainFoto = fotos.length ? fotos[0] : '';
+    const title = p.titulo || `${p.tipo_propiedad} en ${p.ciudad}`;
+
+    const galleryHTML = fotos.length ? `
+      <div class="gallery">
+        <div class="gallery-main" id="galleryMain" style="${mainFoto ? `background-image:url('${mainFoto}')` : ''}"></div>
+        ${fotos.length > 1 ? `<div class="gallery-thumbs">${fotos.map((f, i) => `
+          <div class="gallery-thumb ${i===0?'active':''}" style="background-image:url('${f}')" onclick="setMainPhoto('${f}', this)"></div>
+        `).join('')}</div>` : ''}
+      </div>` : '';
+
+    const dataItems = [
+      { value: fmtPrice(p.precio) + ' €', label: 'Precio' },
+      { value: esc(p.superficie_util) + ' m²', label: 'Sup. útil' },
+      { value: esc(p.superficie_construida) + ' m²', label: 'Sup. construida' },
+      { value: esc(p.habitaciones), label: 'Habitaciones' },
+      { value: esc(p.banos), label: 'Baños' },
+    ];
+    if (p.planta) dataItems.push({ value: esc(p.planta), label: 'Planta' });
+    if (p.estado_vivienda) dataItems.push({ value: esc(p.estado_vivienda), label: 'Estado' });
+    if (p.ascensor && p.ascensor !== 'No') dataItems.push({ value: 'Sí', label: 'Ascensor' });
+    if (p.garaje && p.garaje !== 'No') dataItems.push({ value: 'Sí', label: 'Garaje' });
+    if (p.eficiencia_energetica) dataItems.push({ value: esc(p.eficiencia_energetica), label: 'Energía' });
+
+    const waMsg = encodeURIComponent(`Hola, me interesa la propiedad "${title}" en ${p.ciudad}. ¿Podrían darme más información?`);
+
+    document.getElementById('detailMain').innerHTML = `
+      ${galleryHTML}
+
+      <div class="detail-header">
+        <span class="detail-badge">${esc(p.operacion)}</span>
+        <h1 class="detail-title">${esc(title)}</h1>
+        <div class="detail-location">📍 ${esc(p.direccion || '')}${p.direccion ? ', ' : ''}${esc(p.ciudad)}, ${esc(p.provincia)}</div>
+        <div class="detail-price">${fmtPrice(p.precio)} €${p.operacion === 'Alquiler' ? '/mes' : ''}</div>
+      </div>
+
+      <div class="detail-data">
+        ${dataItems.map(d => `<div class="detail-data-item"><span class="detail-data-value">${d.value}</span><span class="detail-data-label">${d.label}</span></div>`).join('')}
+      </div>
+
+      ${p.descripcion_larga ? `<div class="detail-section"><div class="detail-section-title">Descripción</div><div class="detail-section-content">${esc(p.descripcion_larga)}</div></div>` : ''}
+      ${p.descripcion_corta && !p.descripcion_larga ? `<div class="detail-section"><div class="detail-section-title">Descripción</div><div class="detail-section-content">${esc(p.descripcion_corta)}</div></div>` : ''}
+
+      <div class="contact-cta">
+        <h3>¿Te interesa esta propiedad?</h3>
+        <p>Contacta con nosotros sin compromiso. Estaremos encantados de enseñártela.</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Reyna Inmobiliaria · C/ Flores de San Torcuato, 10 · 49014 Zamora</p>
+        <div class="cta-buttons">
+          <a class="btn-cta btn-cta-phone" href="tel:+34980533536">📞 Llamar</a>
+          <a class="btn-cta btn-cta-whatsapp" href="https://wa.me/34628488877?text=${waMsg}" target="_blank">💬 WhatsApp</a>
+          <a class="btn-cta btn-cta-email" href="mailto:adm77@telefonica.net?subject=Consulta: ${encodeURIComponent(title)}">✉️ Email</a>
+        </div>
+      </div>
+    `;
+  }
+
+  window.setMainPhoto = function(url, thumb) {
+    document.getElementById('galleryMain').style.backgroundImage = `url('${url}')`;
+    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  };
+
+  loadDetail();
+</script>
+</body>
+</html>

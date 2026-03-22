@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartel A4 · Inmobiliaria Reyna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="/static/logo-hq.png">
+</head>
+<body class="cartel-body">
+
+  <!-- Toolbar (screen only) -->
+  <div class="cartel-toolbar no-print">
+    <a href="/propiedades" class="btn-back">Volver a propiedades</a>
+    <button onclick="window.print()" class="btn-gold">Imprimir / Guardar PDF</button>
+  </div>
+
+  <!-- A4 Sheet -->
+  <div class="a4-sheet" id="a4Sheet">
+
+    <!-- 1. Title at top -->
+    <div class="a4-title-wrap">
+      <div class="a4-operacion-badge" id="a4Operacion">VENTA</div>
+      <h1 class="a4-title" id="a4Title"></h1>
+    </div>
+
+    <!-- 2. Main photo (large) -->
+    <div class="a4-main-photo" id="a4MainPhoto"></div>
+
+    <!-- 3. Row of 4 small photos -->
+    <div class="a4-photo-row" id="a4PhotoRow"></div>
+
+    <!-- 4. Data strip -->
+    <div class="a4-data-strip">
+      <div class="a4-data-item">
+        <span class="a4-data-value" id="a4Price"></span>
+        <span class="a4-data-label">Precio</span>
+      </div>
+      <div class="a4-data-item">
+        <span class="a4-data-value" id="a4Area"></span>
+        <span class="a4-data-label">Superficie útil</span>
+      </div>
+      <div class="a4-data-item">
+        <span class="a4-data-value" id="a4Rooms"></span>
+        <span class="a4-data-label">Habitaciones</span>
+      </div>
+      <div class="a4-data-item">
+        <span class="a4-data-value" id="a4Baths"></span>
+        <span class="a4-data-label">Baños</span>
+      </div>
+    </div>
+    <!-- 4b. Extra data (conditional) -->
+    <div class="a4-data-strip" id="a4ExtraStrip" style="display:none;margin-top:-2mm"></div>
+    <!-- 4c. Referencia -->
+    <div id="a4Ref" style="font-size:7pt;color:#9c9389;text-align:right;margin-bottom:2mm"></div>
+
+    <!-- 5. Description -->
+    <p class="a4-description" id="a4Desc"></p>
+
+    <!-- 6. Footer: only branding, once, at bottom -->
+    <div class="a4-footer">
+      <div class="a4-brand" style="display:flex;align-items:center;gap:6px">
+        <img src="/static/logo-hq.png" alt="" style="width:28px;height:28px;object-fit:cover;object-position:center 15%;border-radius:3px">
+        <div style="line-height:1"><span style="font-family:var(--font-heading);font-size:13pt;font-weight:700;color:#1a6b5a">REYNA</span><br><span style="font-size:6pt;font-weight:600;color:#7a9a8f;letter-spacing:1.5px;text-transform:uppercase">Inmobiliaria</span></div>
+      </div>
+      <div class="a4-contact">
+        <span>📞 980 53 35 36 / 980 53 60 12</span>
+        <span>💬 628 488 877</span>
+        <span>✉️ adm77@telefonica.net</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  (function() {
+    const propertyId = window.location.pathname.split('/').pop();
+
+    fetch(`/api/propiedades/${propertyId}`)
+      .then(r => {
+        if (!r.ok) throw new Error('No encontrada');
+        return r.json();
+      })
+      .then(fillCartel)
+      .catch(err => {
+        document.getElementById('a4Sheet').innerHTML =
+          `<p style="padding:40px;text-align:center;color:#999">Error: ${err.message}</p>`;
+      });
+
+    function fillCartel(p) {
+      document.getElementById('a4Operacion').textContent = (p.operacion || 'VENTA').toUpperCase();
+      document.getElementById('a4Title').textContent = p.titulo || '';
+      const priceSuffix = p.operacion === 'Alquiler' ? '/mes' : '';
+      document.getElementById('a4Price').textContent = formatPrice(p.precio) + ' €' + priceSuffix;
+      document.getElementById('a4Area').textContent = (p.superficie_util || '—') + ' m²';
+      document.getElementById('a4Rooms').textContent = p.habitaciones || '—';
+      document.getElementById('a4Baths').textContent = p.banos || '—';
+      document.getElementById('a4Desc').textContent = p.descripcion_corta || '';
+
+      // Extra data strip (ascensor, garaje, energía, planta)
+      const extras = [];
+      if (p.planta) extras.push({ value: p.planta, label: 'Planta' });
+      if (p.ascensor && p.ascensor !== 'No') extras.push({ value: 'Sí', label: 'Ascensor' });
+      if (p.garaje && p.garaje !== 'No') extras.push({ value: 'Sí', label: 'Garaje' });
+      if (p.eficiencia_energetica) extras.push({ value: p.eficiencia_energetica, label: 'Energía' });
+      if (p.estado_vivienda) extras.push({ value: p.estado_vivienda, label: 'Estado' });
+      if (extras.length) {
+        const strip = document.getElementById('a4ExtraStrip');
+        strip.style.display = 'flex';
+        strip.innerHTML = extras.map(e =>
+          `<div class="a4-data-item"><span class="a4-data-value" style="font-size:11pt">${e.value}</span><span class="a4-data-label">${e.label}</span></div>`
+        ).join('');
+      }
+
+      // Referencia interna
+      if (p.referencia) {
+        document.getElementById('a4Ref').textContent = 'Ref: ' + p.referencia;
+      }
+
+      // Photos
+      const fotos = p.fotos || [];
+      if (fotos.length > 0) {
+        document.getElementById('a4MainPhoto').style.backgroundImage = `url('${fotos[0]}')`;
+      }
+
+      // Up to 4 secondary photos
+      const photoRow = document.getElementById('a4PhotoRow');
+      fotos.slice(1, 5).forEach(src => {
+        const div = document.createElement('div');
+        div.className = 'a4-small-photo';
+        div.style.backgroundImage = `url('${src}')`;
+        photoRow.appendChild(div);
+      });
+
+      document.title = `${p.titulo || 'Propiedad'} · Inmobiliaria Reyna`;
+    }
+
+    function formatPrice(price) {
+      const num = parseInt(price);
+      if (isNaN(num)) return price || '—';
+      return num.toLocaleString('es-ES');
+    }
+  })();
+  </script>
+
+</body>
+</html>

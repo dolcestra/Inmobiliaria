@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inmobiliaria Reyna — Diagrama del Sistema</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0f0f1a;
+  --bg2: #1a1a2e;
+  --bg3: #16213e;
+  --teal: #1a6b5a;
+  --teal-light: #2d9b7a;
+  --gold: #c8a455;
+  --green: #27ae60;
+  --blue: #2980b9;
+  --red: #e74c3c;
+  --text: #e8e8e8;
+  --text-dim: #8892a4;
+  --border: #2a2a40;
+  --card: #1e1e32;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border-bottom: 1px solid var(--border);
+  padding: 24px 40px;
+  text-align: center;
+}
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.header p {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 40px 0;
+  background: var(--bg);
+}
+.tab {
+  padding: 12px 28px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  background: var(--bg2);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--text); background: var(--bg3); }
+.tab.active {
+  background: var(--card);
+  color: var(--gold);
+  border-color: var(--gold);
+  border-bottom: 1px solid var(--card);
+}
+
+/* Content */
+.content {
+  background: var(--card);
+  margin: 0 40px 40px;
+  border: 1px solid var(--border);
+  border-radius: 0 0 12px 12px;
+  padding: 40px;
+  min-height: 600px;
+  overflow-x: auto;
+}
+.section { display: none; }
+.section.active { display: block; }
+
+/* SVG styles */
+svg { font-family: 'Inter', sans-serif; }
+svg text { fill: var(--text); }
+
+/* Architecture boxes */
+.arch-box {
+  fill: var(--bg2);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  rx: 10;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.arch-box:hover {
+  stroke: var(--gold);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 12px rgba(200, 164, 85, 0.2));
+}
+.arch-box.frontend { stroke: var(--teal); }
+.arch-box.backend { stroke: var(--blue); }
+.arch-box.database { stroke: var(--green); }
+.arch-box.external { stroke: var(--gold); }
+
+.arch-title {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--gold);
+}
+.arch-subtitle {
+  font-size: 10px;
+  fill: var(--text-dim);
+}
+.arch-item {
+  font-size: 10px;
+  fill: var(--text);
+}
+.arch-badge {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+/* Arrow lines */
+.arrow-line {
+  stroke: var(--border);
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrowhead);
+}
+.arrow-line.data { stroke: var(--teal-light); stroke-dasharray: 6 3; }
+.arrow-line.api { stroke: var(--blue); }
+.arrow-line.ext { stroke: var(--gold); stroke-dasharray: 4 4; }
+
+/* ERD */
+.erd-table {
+  fill: var(--bg2);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  rx: 8;
+}
+.erd-table:hover {
+  stroke: var(--teal-light);
+  stroke-width: 2;
+}
+.erd-header {
+  fill: var(--teal);
+  rx: 8;
+}
+.erd-header-bottom {
+  fill: var(--teal);
+}
+.erd-col-name { font-size: 11px; fill: var(--text); }
+.erd-col-type { font-size: 10px; fill: var(--text-dim); }
+.erd-col-pk { font-size: 10px; fill: var(--gold); font-weight: 600; }
+.erd-col-fk { font-size: 10px; fill: var(--blue); font-weight: 600; }
+.erd-table-title { font-size: 14px; font-weight: 700; fill: #fff; }
+.erd-relation {
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+/* Flow */
+.flow-step {
+  fill: var(--bg2);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  rx: 8;
+  transition: all 0.3s;
+}
+.flow-step:hover {
+  stroke: var(--teal-light);
+  filter: drop-shadow(0 0 8px rgba(42, 155, 122, 0.2));
+}
+.flow-step.highlight { stroke: var(--gold); }
+.flow-step.external { stroke: var(--gold); stroke-dasharray: 4 4; }
+.flow-step.action { stroke: var(--teal); }
+.flow-step.db { stroke: var(--green); }
+
+.flow-label { font-size: 11px; fill: var(--text); font-weight: 500; }
+.flow-sublabel { font-size: 9px; fill: var(--text-dim); }
+.flow-arrow {
+  stroke: var(--teal-light);
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrowTeal);
+}
+
+.flow-title {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--gold);
+}
+.flow-num {
+  font-size: 20px;
+  font-weight: 700;
+  fill: var(--gold);
+  opacity: 0.3;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 2px solid;
+}
+
+/* Stats bar */
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .content { margin: 0 12px 12px; padding: 16px; }
+  .tabs { padding: 12px 12px 0; }
+  .tab { padding: 10px 16px; font-size: 12px; }
+  .header { padding: 16px; }
+  .header h1 { font-size: 22px; }
+  .stats { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Inmobiliaria Reyna</h1>
+  <p>Arquitectura del Sistema &mdash; FastAPI + SQLite + OpenAI &mdash; CRM Inmobiliario, Zamora</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Páginas</div></div>
+  <div class="stat"><div class="stat-num">31</div><div class="stat-label">Endpoints</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Tablas DB</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">APIs Externas</div></div>
+  <div class="stat"><div class="stat-num">2,071</div><div class="stat-label">Líneas Backend</div></div>
+  <div class="stat"><div class="stat-num">1,945</div><div class="stat-label">Líneas Frontend</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('arch')">Arquitectura</div>
+  <div class="tab" onclick="showTab('erd')">Base de Datos</div>
+  <div class="tab" onclick="showTab('flow')">Flujos de Datos</div>
+</div>
+
+<!-- ===================== SECTION 1: ARCHITECTURE ===================== -->
+<div class="content">
+<div class="section active" id="arch">
+<svg viewBox="0 0 1100 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8892a4"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2d9b7a"/>
+    </marker>
+    <marker id="arrowGold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c8a455"/>
+    </marker>
+  </defs>
+
+  <!-- ===== FRONTEND BLOCK ===== -->
+  <rect class="arch-box frontend" x="20" y="20" width="300" height="340"/>
+  <text class="arch-title" x="40" y="50">FRONTEND</text>
+  <text class="arch-subtitle" x="40" y="66">HTML5 + Vanilla JS + CSS3</text>
+
+  <!-- Pages -->
+  <rect x="35" y="80" width="130" height="28" rx="6" fill="#1a6b5a" opacity="0.3"/>
+  <text class="arch-item" x="45" y="99" font-weight="600" fill="#2d9b7a">index.html</text>
+  <text class="arch-badge" x="128" y="99" fill="#8892a4">Generador</text>
+
+  <rect x="35" y="114" width="130" height="28" rx="6" fill="#1a6b5a" opacity="0.3"/>
+  <text class="arch-item" x="45" y="133" font-weight="600" fill="#2d9b7a">propiedades.html</text>
+  <text class="arch-badge" x="148" y="133" fill="#8892a4">CRM</text>
+
+  <rect x="35" y="148" width="130" height="28" rx="6" fill="#1a6b5a" opacity="0.3"/>
+  <text class="arch-item" x="45" y="167" font-weight="600" fill="#2d9b7a">contactos.html</text>
+  <text class="arch-badge" x="140" y="167" fill="#8892a4">Leads</text>
+
+  <rect x="175" y="80" width="130" height="28" rx="6" fill="#1a6b5a" opacity="0.15"/>
+  <text class="arch-item" x="185" y="99" font-weight="600" fill="#2d9b7a">web.html</text>
+  <text class="arch-badge" x="248" y="99" fill="#8892a4">Catálogo</text>
+
+  <rect x="175" y="114" width="130" height="28" rx="6" fill="#1a6b5a" opacity="0.15"/>
+  <text class="arch-item" x="185" y="133" font-weight="600" fill="#2d9b7a">web-detalle.html</text>
+  <text class="arch-badge" x="296" y="133" fill="#8892a4">Detalle</text>
+
+  <rect x="175" y="148" width="130" height="28" rx="6" fill="#1a6b5a" opacity="0.15"/>
+  <text class="arch-item" x="185" y="167" font-weight="600" fill="#2d9b7a">cartel.html</text>
+  <text class="arch-badge" x="260" y="167" fill="#8892a4">A4 Print</text>
+
+  <!-- JS files -->
+  <line x1="35" y1="195" x2="300" y2="195" stroke="#2a2a40" stroke-width="0.5"/>
+  <text class="arch-subtitle" x="40" y="212">JavaScript Modules</text>
+
+  <rect x="35" y="222" width="265" height="22" rx="4" fill="#2980b9" opacity="0.15"/>
+  <text class="arch-item" x="45" y="237" fill="#5dade2">shared.js</text>
+  <text class="arch-badge" x="108" y="237" fill="#8892a4">Datos comunes, utilidades, zonas</text>
+
+  <rect x="35" y="248" width="126" height="22" rx="4" fill="#2980b9" opacity="0.1"/>
+  <text class="arch-item" x="45" y="263" fill="#5dade2">app.js</text>
+  <text class="arch-badge" x="83" y="263" fill="#8892a4">Formulario</text>
+
+  <rect x="168" y="248" width="132" height="22" rx="4" fill="#2980b9" opacity="0.1"/>
+  <text class="arch-item" x="178" y="263" fill="#5dade2">crm.js</text>
+  <text class="arch-badge" x="216" y="263" fill="#8892a4">CRM Logic</text>
+
+  <rect x="35" y="274" width="265" height="22" rx="4" fill="#2980b9" opacity="0.1"/>
+  <text class="arch-item" x="45" y="289" fill="#5dade2">contactos.js</text>
+  <text class="arch-badge" x="122" y="289" fill="#8892a4">Gestión contactos + matching</text>
+
+  <!-- CSS + Assets -->
+  <line x1="35" y1="308" x2="300" y2="308" stroke="#2a2a40" stroke-width="0.5"/>
+  <text class="arch-subtitle" x="40" y="324">Assets</text>
+  <text class="arch-item" x="40" y="342" fill="#8892a4">style.css (2,005 líneas) · logo.png · uploads/</text>
+
+  <!-- ===== BACKEND BLOCK ===== -->
+  <rect class="arch-box backend" x="400" y="20" width="300" height="440"/>
+  <text class="arch-title" x="420" y="50">BACKEND — FastAPI</text>
+  <text class="arch-subtitle" x="420" y="66">main.py · Python 3 · Uvicorn</text>
+
+  <!-- Endpoint groups -->
+  <rect x="415" y="80" width="270" height="56" rx="6" fill="#2980b9" opacity="0.12"/>
+  <text class="arch-item" x="425" y="97" font-weight="600" fill="#5dade2">Propiedades CRUD</text>
+  <text class="arch-badge" x="425" y="112" fill="#8892a4">POST /api/propiedades</text>
+  <text class="arch-badge" x="425" y="124" fill="#8892a4">GET · PATCH · DELETE · /estado · /textos</text>
+
+  <rect x="415" y="144" width="270" height="44" rx="6" fill="#c8a455" opacity="0.12"/>
+  <text class="arch-item" x="425" y="161" font-weight="600" fill="#c8a455">Generación IA</text>
+  <text class="arch-badge" x="425" y="176" fill="#8892a4">POST /generate · /regenerar · /generar-instagram</text>
+
+  <rect x="415" y="196" width="270" height="44" rx="6" fill="#27ae60" opacity="0.12"/>
+  <text class="arch-item" x="425" y="213" font-weight="600" fill="#27ae60">Contactos CRUD</text>
+  <text class="arch-badge" x="425" y="228" fill="#8892a4">GET · POST · PATCH · DELETE · /search</text>
+
+  <rect x="415" y="248" width="270" height="44" rx="6" fill="#e67e22" opacity="0.12"/>
+  <text class="arch-item" x="425" y="265" font-weight="600" fill="#e67e22">Interesados</text>
+  <text class="arch-badge" x="425" y="280" fill="#8892a4">POST · GET · PATCH · DELETE por propiedad</text>
+
+  <rect x="415" y="300" width="270" height="44" rx="6" fill="#8e44ad" opacity="0.12"/>
+  <text class="arch-item" x="425" y="317" font-weight="600" fill="#9b59b6">Smart Matching</text>
+  <text class="arch-badge" x="425" y="332" fill="#8892a4">GET /contactos/{id}/matches · /propiedades/{id}/matches</text>
+
+  <rect x="415" y="352" width="270" height="44" rx="6" fill="#1a6b5a" opacity="0.12"/>
+  <text class="arch-item" x="425" y="369" font-weight="600" fill="#2d9b7a">Web Pública</text>
+  <text class="arch-badge" x="425" y="384" fill="#8892a4">GET /api/web/propiedades · /{id} (solo activos)</text>
+
+  <!-- Config -->
+  <line x1="415" y1="408" x2="685" y2="408" stroke="#2a2a40" stroke-width="0.5"/>
+  <text class="arch-subtitle" x="420" y="424">Config: .env (OPENAI_API_KEY) · SQLite WAL mode</text>
+  <text class="arch-subtitle" x="420" y="440">Refs: RI-YYYYMM-NNNN · Estado: activo/vendido/alquilado</text>
+
+  <!-- ===== DATABASE BLOCK ===== -->
+  <rect class="arch-box database" x="400" y="500" width="300" height="200"/>
+  <text class="arch-title" x="420" y="530">BASE DE DATOS</text>
+  <text class="arch-subtitle" x="420" y="546">SQLite · inmobiliaria.db · WAL mode</text>
+
+  <rect x="415" y="558" width="270" height="32" rx="6" fill="#27ae60" opacity="0.15"/>
+  <text class="arch-item" x="425" y="578" font-weight="600" fill="#27ae60">propiedades</text>
+  <text class="arch-badge" x="510" y="578" fill="#8892a4">35 columnas · datos + textos IA + fotos + coords</text>
+
+  <rect x="415" y="596" width="270" height="32" rx="6" fill="#27ae60" opacity="0.1"/>
+  <text class="arch-item" x="425" y="616" font-weight="600" fill="#27ae60">contactos</text>
+  <text class="arch-badge" x="495" y="616" fill="#8892a4">6 columnas + preferencias JSON</text>
+
+  <rect x="415" y="634" width="270" height="32" rx="6" fill="#27ae60" opacity="0.1"/>
+  <text class="arch-item" x="425" y="654" font-weight="600" fill="#27ae60">interesados</text>
+  <text class="arch-badge" x="505" y="654" fill="#8892a4">11 cols · FK propiedad + contacto</text>
+
+  <text class="arch-subtitle" x="420" y="685">Fotos: /static/uploads/{id}/{uuid}.ext</text>
+
+  <!-- ===== EXTERNAL SERVICES ===== -->
+  <rect class="arch-box external" x="790" y="20" width="280" height="160"/>
+  <text class="arch-title" x="810" y="50">SERVICIOS EXTERNOS</text>
+
+  <rect x="805" y="64" width="250" height="30" rx="6" fill="#c8a455" opacity="0.15"/>
+  <text class="arch-item" x="815" y="84" font-weight="600" fill="#c8a455">OpenAI GPT-4o-mini</text>
+  <text class="arch-badge" x="940" y="84" fill="#8892a4">Textos IA</text>
+
+  <rect x="805" y="100" width="250" height="30" rx="6" fill="#c8a455" opacity="0.1"/>
+  <text class="arch-item" x="815" y="120" font-weight="600" fill="#c8a455">Nominatim / OSM</text>
+  <text class="arch-badge" x="935" y="120" fill="#8892a4">Geocoding</text>
+
+  <rect x="805" y="136" width="250" height="30" rx="6" fill="#c8a455" opacity="0.1"/>
+  <text class="arch-item" x="815" y="156" font-weight="600" fill="#c8a455">Leaflet.js + OSM Tiles</text>
+  <text class="arch-badge" x="958" y="156" fill="#8892a4">Mapas</text>
+
+  <!-- ===== MATCHING ENGINE ===== -->
+  <rect class="arch-box external" x="790" y="220" width="280" height="180"/>
+  <text class="arch-title" x="810" y="250">MOTOR DE MATCHING</text>
+  <text class="arch-subtitle" x="810" y="266">_calc_match() — Score 0-100</text>
+
+  <text class="arch-item" x="810" y="290" fill="#c8a455">25 pts</text>
+  <text class="arch-item" x="852" y="290">Operación (hard filter)</text>
+  <text class="arch-item" x="810" y="308" fill="#c8a455">20 pts</text>
+  <text class="arch-item" x="852" y="308">Precio (±20% tolerancia)</text>
+  <text class="arch-item" x="810" y="326" fill="#c8a455">15 pts</text>
+  <text class="arch-item" x="852" y="326">Tipo propiedad</text>
+  <text class="arch-item" x="810" y="344" fill="#c8a455">15 pts</text>
+  <text class="arch-item" x="852" y="344">Ciudad</text>
+  <text class="arch-item" x="810" y="362" fill="#c8a455">10 pts</text>
+  <text class="arch-item" x="852" y="362">Habitaciones / Baños / Superficie</text>
+
+  <rect x="810" y="376" width="240" height="16" rx="3" fill="#2a2a40"/>
+  <rect x="810" y="376" width="240" height="16" rx="3" fill="#c8a455" opacity="0.3"/>
+  <text class="arch-badge" x="895" y="387" fill="#c8a455" text-anchor="middle">100 PUNTOS MÁXIMO</text>
+
+  <!-- ===== FILE STORAGE ===== -->
+  <rect class="arch-box" x="790" y="440" width="280" height="100" style="stroke: #95a5a6"/>
+  <text class="arch-title" x="810" y="470" fill="#95a5a6">ALMACENAMIENTO</text>
+  <text class="arch-item" x="810" y="492">Fotos: /static/uploads/{property_id}/</text>
+  <text class="arch-item" x="810" y="510">Nombres: UUID 8-char + extensión original</text>
+  <text class="arch-item" x="810" y="528" fill="#8892a4">Logo: logo.png · logo-hq.png</text>
+
+  <!-- ===== ARROWS ===== -->
+  <!-- Frontend → Backend -->
+  <path class="arrow-line api" d="M320,180 L400,180" marker-end="url(#arrowhead)"/>
+  <text class="arch-badge" x="340" y="174" fill="#5dade2">fetch()</text>
+
+  <!-- Backend → Database -->
+  <path class="arrow-line" d="M550,460 L550,500" marker-end="url(#arrowhead)"/>
+  <text class="arch-badge" x="558" y="485" fill="#8892a4">SQL</text>
+
+  <!-- Backend → External (OpenAI) -->
+  <path class="arrow-line ext" d="M700,165 L790,100" marker-end="url(#arrowGold)"/>
+  <text class="arch-badge" x="730" y="120" fill="#c8a455">API</text>
+
+  <!-- Frontend → External (Nominatim - direct from browser) -->
+  <path class="arrow-line ext" d="M320,100 C380,60 750,60 805,100" marker-end="url(#arrowGold)"/>
+  <text class="arch-badge" x="540" y="52" fill="#c8a455">Geocoding (browser)</text>
+
+  <!-- Frontend → External (Leaflet - direct from browser) -->
+  <path class="arrow-line ext" d="M320,140 C380,130 740,130 805,145" marker-end="url(#arrowGold)"/>
+
+  <!-- Backend → Matching -->
+  <path class="arrow-line api" d="M700,316 L790,310" marker-end="url(#arrowhead)"/>
+
+  <!-- Backend → Storage -->
+  <path class="arrow-line" d="M700,420 L790,470" marker-end="url(#arrowhead)"/>
+  <text class="arch-badge" x="730" y="438" fill="#8892a4">Files</text>
+
+  <!-- Frontend label -->
+  <rect x="20" y="370" width="50" height="18" rx="4" fill="#1a6b5a"/>
+  <text class="arch-badge" x="28" y="383" fill="#fff">CRM</text>
+
+  <rect x="80" y="370" width="70" height="18" rx="4" fill="#1a6b5a" opacity="0.6"/>
+  <text class="arch-badge" x="88" y="383" fill="#fff">PÚBLICO</text>
+
+  <rect x="160" y="370" width="55" height="18" rx="4" fill="#1a6b5a" opacity="0.4"/>
+  <text class="arch-badge" x="168" y="383" fill="#fff">PRINT</text>
+</svg>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-color" style="border-color: var(--teal)"></div>Frontend</div>
+  <div class="legend-item"><div class="legend-color" style="border-color: var(--blue)"></div>Backend API</div>
+  <div class="legend-item"><div class="legend-color" style="border-color: var(--green)"></div>Base de Datos</div>
+  <div class="legend-item"><div class="legend-color" style="border-color: var(--gold)"></div>Servicios Externos</div>
+  <div class="legend-item"><div class="legend-color" style="border-color: #95a5a6"></div>Almacenamiento</div>
+</div>
+</div>
+
+<!-- ===================== SECTION 2: ERD ===================== -->
+<div class="section" id="erd">
+<svg viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="diamond" markerWidth="12" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 4, 6 0, 12 4, 6 8" fill="#c8a455"/>
+    </marker>
+    <marker id="crow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <line x1="0" y1="0" x2="10" y2="6" stroke="#c8a455" stroke-width="1.5"/>
+      <line x1="0" y1="12" x2="10" y2="6" stroke="#c8a455" stroke-width="1.5"/>
+      <line x1="0" y1="6" x2="10" y2="6" stroke="#c8a455" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <!-- ===== PROPIEDADES TABLE ===== -->
+  <rect class="erd-table" x="30" y="20" width="400" height="740"/>
+  <rect class="erd-header" x="30" y="20" width="400" height="40"/>
+  <rect class="erd-header-bottom" x="30" y="40" width="400" height="20"/>
+  <text class="erd-table-title" x="230" y="46" text-anchor="middle">propiedades</text>
+  <text style="font-size:10px;fill:#a8d8c8" x="330" y="46">35 columnas</text>
+
+  <!-- Columns -->
+  <text class="erd-col-pk" x="45" y="82">PK</text>
+  <text class="erd-col-name" x="75" y="82">id</text>
+  <text class="erd-col-type" x="340" y="82">INTEGER</text>
+
+  <text class="erd-col-name" x="75" y="102">created_at</text>
+  <text class="erd-col-type" x="340" y="102">TEXT</text>
+
+  <line x1="45" y1="110" x2="415" y2="110" stroke="#2a2a40" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="45" y="124">— Datos básicos</text>
+
+  <text class="erd-col-name" x="75" y="142">tipo_propiedad</text>
+  <text class="erd-col-type" x="340" y="142">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="162">operacion</text>
+  <text class="erd-col-type" x="340" y="162">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="182">referencia</text>
+  <text class="erd-col-type" x="340" y="182">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="240" y="182">RI-YYYYMM-NNNN</text>
+
+  <text class="erd-col-name" x="75" y="202">estado</text>
+  <text class="erd-col-type" x="340" y="202">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="220" y="202">activo|retirado|vendido|alquilado</text>
+
+  <line x1="45" y1="212" x2="415" y2="212" stroke="#2a2a40" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="45" y="226">— Ubicación</text>
+
+  <text class="erd-col-name" x="75" y="244">direccion</text>
+  <text class="erd-col-type" x="340" y="244">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="264">zona</text>
+  <text class="erd-col-type" x="340" y="264">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="284">ciudad</text>
+  <text class="erd-col-type" x="340" y="284">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="304">codigo_postal, provincia</text>
+  <text class="erd-col-type" x="340" y="304">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="324">latitud, longitud</text>
+  <text class="erd-col-type" x="340" y="324">REAL</text>
+
+  <text class="erd-col-name" x="75" y="344">ref_catastral</text>
+  <text class="erd-col-type" x="340" y="344">TEXT</text>
+
+  <line x1="45" y1="354" x2="415" y2="354" stroke="#2a2a40" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="45" y="368">— Características</text>
+
+  <text class="erd-col-name" x="75" y="386">precio</text>
+  <text class="erd-col-type" x="340" y="386">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="406">superficie_construida, _util</text>
+  <text class="erd-col-type" x="340" y="406">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="426">habitaciones, banos</text>
+  <text class="erd-col-type" x="340" y="426">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="446">planta, ascensor, garaje</text>
+  <text class="erd-col-type" x="340" y="446">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="466">garaje_incluido</text>
+  <text class="erd-col-type" x="340" y="466">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="486">estado_vivienda</text>
+  <text class="erd-col-type" x="340" y="486">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="506">anio_construccion</text>
+  <text class="erd-col-type" x="340" y="506">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="526">eficiencia_energetica</text>
+  <text class="erd-col-type" x="340" y="526">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="546">orientacion, exterior_interior</text>
+  <text class="erd-col-type" x="340" y="546">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="566">gastos_comunidad, ibi</text>
+  <text class="erd-col-type" x="340" y="566">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="586">amenidades</text>
+  <text class="erd-col-type" x="340" y="586">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="240" y="586">JSON array</text>
+
+  <line x1="45" y1="596" x2="415" y2="596" stroke="#2a2a40" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="45" y="610">— Textos IA (GPT-4o-mini)</text>
+
+  <text class="erd-col-name" x="75" y="628">titulo</text>
+  <text class="erd-col-type" x="340" y="628">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="648">descripcion_corta, _larga</text>
+  <text class="erd-col-type" x="340" y="648">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="668">copy_instagram</text>
+  <text class="erd-col-type" x="340" y="668">TEXT</text>
+
+  <text class="erd-col-name" x="75" y="688">mensaje_whatsapp</text>
+  <text class="erd-col-type" x="340" y="688">TEXT</text>
+
+  <line x1="45" y1="698" x2="415" y2="698" stroke="#2a2a40" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="45" y="712">— Media y relaciones</text>
+
+  <text class="erd-col-name" x="75" y="730">fotos</text>
+  <text class="erd-col-type" x="340" y="730">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="240" y="730">JSON array de paths</text>
+
+  <text class="erd-col-name" x="75" y="750">descripcion_agente</text>
+  <text class="erd-col-type" x="340" y="750">TEXT</text>
+
+  <text class="erd-col-fk" x="45" y="750">FK</text>
+  <text class="erd-col-name" x="215" y="750">cliente_comprador_id</text>
+  <text class="erd-col-type" x="340" y="750">INTEGER</text>
+
+  <!-- ===== CONTACTOS TABLE ===== -->
+  <rect class="erd-table" x="500" y="20" width="340" height="280"/>
+  <rect class="erd-header" x="500" y="20" width="340" height="40"/>
+  <rect class="erd-header-bottom" x="500" y="40" width="340" height="20"/>
+  <text class="erd-table-title" x="670" y="46" text-anchor="middle">contactos</text>
+
+  <text class="erd-col-pk" x="515" y="82">PK</text>
+  <text class="erd-col-name" x="545" y="82">id</text>
+  <text class="erd-col-type" x="760" y="82">INTEGER</text>
+
+  <text class="erd-col-name" x="545" y="106">created_at</text>
+  <text class="erd-col-type" x="760" y="106">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="130">nombre</text>
+  <text class="erd-col-type" x="760" y="130">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="154">telefono</text>
+  <text class="erd-col-type" x="760" y="154">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="178">email</text>
+  <text class="erd-col-type" x="760" y="178">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="202">notas</text>
+  <text class="erd-col-type" x="760" y="202">TEXT</text>
+
+  <line x1="515" y1="212" x2="825" y2="212" stroke="#2a2a40" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="515" y="226">— Preferencias (JSON)</text>
+
+  <text class="erd-col-name" x="545" y="244" fill="#8892a4">operacion, tipo_propiedad, ciudad</text>
+  <text class="erd-col-name" x="545" y="264" fill="#8892a4">precio_min, precio_max</text>
+  <text class="erd-col-name" x="545" y="284" fill="#8892a4">habitaciones_min, banos_min, superficie_min</text>
+
+  <!-- ===== INTERESADOS TABLE ===== -->
+  <rect class="erd-table" x="500" y="360" width="340" height="380"/>
+  <rect class="erd-header" x="500" y="360" width="340" height="40"/>
+  <rect class="erd-header-bottom" x="500" y="380" width="340" height="20"/>
+  <text class="erd-table-title" x="670" y="386" text-anchor="middle">interesados</text>
+
+  <text class="erd-col-pk" x="515" y="422">PK</text>
+  <text class="erd-col-name" x="545" y="422">id</text>
+  <text class="erd-col-type" x="760" y="422">INTEGER</text>
+
+  <text class="erd-col-name" x="545" y="446">created_at</text>
+  <text class="erd-col-type" x="760" y="446">TEXT</text>
+
+  <text class="erd-col-fk" x="515" y="474">FK</text>
+  <text class="erd-col-name" x="545" y="474">propiedad_id</text>
+  <text class="erd-col-type" x="760" y="474">INTEGER</text>
+
+  <text class="erd-col-fk" x="515" y="498">FK</text>
+  <text class="erd-col-name" x="545" y="498">contacto_id</text>
+  <text class="erd-col-type" x="760" y="498">INTEGER</text>
+
+  <text class="erd-col-name" x="545" y="526">nombre</text>
+  <text class="erd-col-type" x="760" y="526">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="550">telefono</text>
+  <text class="erd-col-type" x="760" y="550">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="574">email</text>
+  <text class="erd-col-type" x="760" y="574">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="598">notas</text>
+  <text class="erd-col-type" x="760" y="598">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="622">visita_fecha</text>
+  <text class="erd-col-type" x="760" y="622">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="640" y="622">comma-separated</text>
+
+  <text class="erd-col-name" x="545" y="646">oferta</text>
+  <text class="erd-col-type" x="760" y="646">TEXT</text>
+
+  <text class="erd-col-name" x="545" y="670">resultado</text>
+  <text class="erd-col-type" x="760" y="670">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="620" y="670">pendiente|compra|descartado</text>
+
+  <text class="erd-col-name" x="545" y="694">actualizaciones</text>
+  <text class="erd-col-type" x="760" y="694">TEXT</text>
+  <text style="font-size:8px;fill:#8892a4" x="656" y="694">JSON array</text>
+
+  <!-- ===== RELATIONS ===== -->
+  <!-- propiedades 1 → N interesados -->
+  <path class="erd-relation" d="M430,470 L500,474" marker-end="url(#crow)" marker-start="url(#diamond)"/>
+  <text style="font-size:9px;fill:#c8a455" x="440" y="462">1</text>
+  <text style="font-size:9px;fill:#c8a455" x="480" y="462">N</text>
+
+  <!-- contactos 1 → N interesados -->
+  <path class="erd-relation" d="M670,300 L670,360" marker-end="url(#crow)" marker-start="url(#diamond)"/>
+  <text style="font-size:9px;fill:#c8a455" x="676" y="316">1</text>
+  <text style="font-size:9px;fill:#c8a455" x="676" y="352">N</text>
+
+  <!-- Labels -->
+  <rect x="900" y="40" width="180" height="120" rx="8" fill="#1e1e32" stroke="#2a2a40"/>
+  <text style="font-size:11px;fill:#c8a455;font-weight:600" x="915" y="62">Leyenda</text>
+
+  <text class="erd-col-pk" x="915" y="84">PK</text>
+  <text style="font-size:10px;fill:#8892a4" x="940" y="84">Primary Key</text>
+
+  <text class="erd-col-fk" x="915" y="104">FK</text>
+  <text style="font-size:10px;fill:#8892a4" x="940" y="104">Foreign Key</text>
+
+  <line x1="915" y1="114" x2="945" y2="114" stroke="#c8a455" stroke-width="1.5"/>
+  <polygon points="945,110 955,114 945,118" fill="#c8a455"/>
+  <text style="font-size:10px;fill:#8892a4" x="960" y="118">Relación 1:N</text>
+
+  <text style="font-size:8px;fill:#8892a4" x="915" y="146">JSON array</text>
+  <text style="font-size:10px;fill:#8892a4" x="978" y="146">Datos embebidos</text>
+</svg>
+</div>
+
+<!-- ===================== SECTION 3: DATA FLOWS ===================== -->
+<div class="section" id="flow">
+<svg viewBox="0 0 1100 980" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ===== FLOW 1: Property Creation ===== -->
+  <text class="flow-num" x="20" y="40">01</text>
+  <text class="flow-title" x="60" y="40">Creación de Propiedad</text>
+  <text style="font-size:11px;fill:#8892a4" x="60" y="58">Formulario → IA → Almacenamiento</text>
+
+  <!-- Steps -->
+  <rect class="flow-step" x="30" y="75" width="140" height="50"/>
+  <text class="flow-label" x="60" y="98">Formulario</text>
+  <text class="flow-sublabel" x="60" y="112">index.html</text>
+  <text style="font-size:16px" x="38" y="106">📝</text>
+
+  <path class="flow-arrow" d="M170,100 L200,100"/>
+
+  <rect class="flow-step action" x="200" y="75" width="140" height="50"/>
+  <text class="flow-label" x="230" y="98">Validación</text>
+  <text class="flow-sublabel" x="230" y="112">app.js + fotos</text>
+  <text style="font-size:16px" x="208" y="106">✅</text>
+
+  <path class="flow-arrow" d="M340,100 L370,100"/>
+
+  <rect class="flow-step external" x="370" y="75" width="150" height="50"/>
+  <text class="flow-label" x="400" y="98">OpenAI GPT-4o</text>
+  <text class="flow-sublabel" x="400" y="112">POST /api/generate</text>
+  <text style="font-size:16px" x="378" y="106">🤖</text>
+
+  <path class="flow-arrow" d="M520,100 L550,100"/>
+
+  <rect class="flow-step" x="550" y="75" width="150" height="50"/>
+  <text class="flow-label" x="580" y="98">Textos generados</text>
+  <text class="flow-sublabel" x="580" y="112">título + descripciones</text>
+  <text style="font-size:16px" x="558" y="106">📄</text>
+
+  <path class="flow-arrow" d="M700,100 L730,100"/>
+
+  <rect class="flow-step action" x="730" y="75" width="160" height="50"/>
+  <text class="flow-label" x="760" y="98">Guardar</text>
+  <text class="flow-sublabel" x="760" y="112">POST /api/propiedades</text>
+  <text style="font-size:16px" x="738" y="106">💾</text>
+
+  <path class="flow-arrow" d="M910,100 L940,100"/>
+
+  <rect class="flow-step db" x="940" y="75" width="130" height="50"/>
+  <text class="flow-label" x="970" y="98">SQLite + Fotos</text>
+  <text class="flow-sublabel" x="970" y="112">DB + /uploads/</text>
+  <text style="font-size:16px" x="948" y="106">🗄️</text>
+
+  <!-- Detail: what OpenAI generates -->
+  <rect x="370" y="135" width="330" height="70" rx="6" fill="#c8a455" opacity="0.08" stroke="#c8a455" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455;font-weight:600" x="385" y="152">OpenAI genera (JSON):</text>
+  <text style="font-size:9px;fill:#8892a4" x="385" y="166">titulo — "Luminoso piso en Zona Centro"</text>
+  <text style="font-size:9px;fill:#8892a4" x="385" y="178">descripcion_corta — 2-3 frases marketing</text>
+  <text style="font-size:9px;fill:#8892a4" x="385" y="190">descripcion_larga — Párrafo completo</text>
+  <text style="font-size:9px;fill:#8892a4" x="570" y="166">mensaje_whatsapp — Con emojis</text>
+  <text style="font-size:9px;fill:#8892a4" x="570" y="178">Modelo: gpt-4o-mini · T=0.72</text>
+
+  <!-- ===== FLOW 2: Smart Matching ===== -->
+  <text class="flow-num" x="20" y="280">02</text>
+  <text class="flow-title" x="60" y="280">Matching Inteligente</text>
+  <text style="font-size:11px;fill:#8892a4" x="60" y="298">Contacto → Preferencias → Score → Resultados</text>
+
+  <rect class="flow-step" x="30" y="315" width="140" height="50"/>
+  <text class="flow-label" x="60" y="338">Contacto</text>
+  <text class="flow-sublabel" x="60" y="352">Con preferencias</text>
+  <text style="font-size:16px" x="38" y="346">👤</text>
+
+  <path class="flow-arrow" d="M170,340 L200,340"/>
+
+  <rect class="flow-step" x="200" y="315" width="160" height="50"/>
+  <text class="flow-label" x="230" y="338">Preferencias JSON</text>
+  <text class="flow-sublabel" x="230" y="352">tipo, ciudad, precio...</text>
+  <text style="font-size:16px" x="208" y="346">🎯</text>
+
+  <path class="flow-arrow" d="M360,340 L390,340"/>
+
+  <rect class="flow-step action" x="390" y="315" width="170" height="50"/>
+  <text class="flow-label" x="420" y="338">_calc_match()</text>
+  <text class="flow-sublabel" x="420" y="352">vs todas propiedades activas</text>
+  <text style="font-size:16px" x="398" y="346">⚙️</text>
+
+  <path class="flow-arrow" d="M560,340 L590,340"/>
+
+  <rect class="flow-step" x="590" y="315" width="130" height="50"/>
+  <text class="flow-label" x="620" y="338">Score 0-100</text>
+  <text class="flow-sublabel" x="620" y="352">Sort DESC</text>
+  <text style="font-size:16px" x="598" y="346">📊</text>
+
+  <path class="flow-arrow" d="M720,340 L750,340"/>
+
+  <rect class="flow-step db" x="750" y="315" width="140" height="50"/>
+  <text class="flow-label" x="780" y="338">Top 20 matches</text>
+  <text class="flow-sublabel" x="780" y="352">con razones</text>
+  <text style="font-size:16px" x="758" y="346">🏆</text>
+
+  <!-- Scoring detail -->
+  <rect x="390" y="375" width="500" height="75" rx="6" fill="#8e44ad" opacity="0.08" stroke="#9b59b6" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#9b59b6;font-weight:600" x="405" y="392">Algoritmo de scoring:</text>
+
+  <text style="font-size:9px;fill:#8892a4" x="405" y="408">Operación (Venta/Alquiler) = 25pts (HARD FILTER — no match = 0)</text>
+  <text style="font-size:9px;fill:#8892a4" x="405" y="422">Precio = 20pts (dentro rango: full, +1-20%: 8pts, >+20%: DESCARTADO)</text>
+  <text style="font-size:9px;fill:#8892a4" x="405" y="436">Tipo = 15pts · Ciudad = 15pts · Hab/Baños/Sup = 10pts cada uno</text>
+
+  <!-- Bidirectional note -->
+  <rect x="30" y="375" width="320" height="35" rx="6" fill="#2980b9" opacity="0.08" stroke="#2980b9" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#5dade2" x="45" y="396">Bidireccional: contacto→propiedades Y propiedad→contactos</text>
+
+  <!-- ===== FLOW 3: Interested Party Lifecycle ===== -->
+  <text class="flow-num" x="20" y="500">03</text>
+  <text class="flow-title" x="60" y="500">Gestión de Interesados</text>
+  <text style="font-size:11px;fill:#8892a4" x="60" y="518">Captación → Seguimiento → Cierre</text>
+
+  <!-- Row 1: Creation -->
+  <rect class="flow-step" x="30" y="540" width="140" height="50"/>
+  <text class="flow-label" x="60" y="563">Modal detalle</text>
+  <text class="flow-sublabel" x="60" y="577">Propiedad en CRM</text>
+  <text style="font-size:16px" x="38" y="571">🏠</text>
+
+  <path class="flow-arrow" d="M170,565 L200,565"/>
+
+  <rect class="flow-step action" x="200" y="540" width="170" height="50"/>
+  <text class="flow-label" x="230" y="563">Agregar interesado</text>
+  <text class="flow-sublabel" x="230" y="577">nombre, tel, email, notas</text>
+  <text style="font-size:16px" x="208" y="571">➕</text>
+
+  <path class="flow-arrow" d="M370,565 L400,565"/>
+
+  <rect class="flow-step" x="400" y="540" width="170" height="50"/>
+  <text class="flow-label" x="430" y="563">Auto-link contacto</text>
+  <text class="flow-sublabel" x="430" y="577">Busca o crea en contactos</text>
+  <text style="font-size:16px" x="408" y="571">🔗</text>
+
+  <path class="flow-arrow" d="M570,565 L600,565"/>
+
+  <rect class="flow-step db" x="600" y="540" width="160" height="50"/>
+  <text class="flow-label" x="630" y="563">DB: interesados</text>
+  <text class="flow-sublabel" x="630" y="577">propiedad_id + contacto_id</text>
+  <text style="font-size:16px" x="608" y="571">🗄️</text>
+
+  <!-- Row 2: Lifecycle -->
+  <path class="flow-arrow" d="M680,590 L680,620"/>
+
+  <rect class="flow-step" x="30" y="620" width="160" height="55"/>
+  <text class="flow-label" x="60" y="643">Estado: Pendiente</text>
+  <text class="flow-sublabel" x="60" y="657">Seguimiento activo</text>
+  <rect x="38" y="633" width="10" height="10" rx="2" fill="#f39c12"/>
+
+  <path class="flow-arrow" d="M190,647 L240,647"/>
+
+  <rect class="flow-step" x="240" y="620" width="170" height="55"/>
+  <text class="flow-label" x="270" y="643">Registrar visitas</text>
+  <text class="flow-sublabel" x="270" y="657">add_visita → fechas CSV</text>
+  <text style="font-size:16px" x="248" y="651">📅</text>
+
+  <path class="flow-arrow" d="M410,647 L460,647"/>
+
+  <rect class="flow-step" x="460" y="620" width="160" height="55"/>
+  <text class="flow-label" x="490" y="643">Registrar oferta</text>
+  <text class="flow-sublabel" x="490" y="657">Monto en € + notas</text>
+  <text style="font-size:16px" x="468" y="651">💰</text>
+
+  <path class="flow-arrow" d="M620,647 L680,647"/>
+
+  <!-- Final states -->
+  <rect class="flow-step" x="680" y="620" width="160" height="55" style="stroke: #27ae60"/>
+  <text class="flow-label" x="710" y="638" fill="#27ae60">Resultado final</text>
+  <text class="flow-sublabel" x="710" y="657">PATCH /interesados/{id}</text>
+
+  <!-- Result options -->
+  <path class="flow-arrow" d="M840,632 L890,610"/>
+  <rect x="890" y="595" width="100" height="28" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60"/>
+  <text style="font-size:11px;fill:#27ae60;font-weight:600" x="912" y="614">Compra</text>
+
+  <path class="flow-arrow" d="M840,647 L890,647"/>
+  <rect x="890" y="633" width="100" height="28" rx="6" fill="#e74c3c" opacity="0.2" stroke="#e74c3c"/>
+  <text style="font-size:11px;fill:#e74c3c;font-weight:600" x="904" y="652">Descartado</text>
+
+  <path class="flow-arrow" d="M840,662 L890,682"/>
+  <rect x="890" y="670" width="100" height="28" rx="6" fill="#f39c12" opacity="0.2" stroke="#f39c12"/>
+  <text style="font-size:11px;fill:#f39c12;font-weight:600" x="906" y="689">Pendiente</text>
+
+  <!-- Updates log -->
+  <rect x="30" y="700" width="810" height="50" rx="6" fill="#1a6b5a" opacity="0.08" stroke="#1a6b5a" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#2d9b7a;font-weight:600" x="45" y="718">Historial de actualizaciones (actualizaciones JSON array):</text>
+  <text style="font-size:9px;fill:#8892a4" x="45" y="735">Cada update se guarda con timestamp → [{"fecha": "2026-03-20 10:30", "texto": "Visitó el piso, le interesa pero quiere negociar precio"}, ...]</text>
+
+  <!-- ===== FLOW 4: Address & Geocoding ===== -->
+  <text class="flow-num" x="20" y="800">04</text>
+  <text class="flow-title" x="60" y="800">Geocodificación y Mapas</text>
+  <text style="font-size:11px;fill:#8892a4" x="60" y="818">Dirección → Coordenadas → Mapa interactivo</text>
+
+  <rect class="flow-step" x="30" y="840" width="150" height="50"/>
+  <text class="flow-label" x="60" y="863">Input dirección</text>
+  <text class="flow-sublabel" x="60" y="877">Autocomplete 300ms</text>
+  <text style="font-size:16px" x="38" y="871">⌨️</text>
+
+  <path class="flow-arrow" d="M180,865 L220,865"/>
+
+  <rect class="flow-step external" x="220" y="840" width="160" height="50"/>
+  <text class="flow-label" x="250" y="863">Nominatim API</text>
+  <text class="flow-sublabel" x="250" y="877">{calle}, {ciudad}, España</text>
+  <text style="font-size:16px" x="228" y="871">🌐</text>
+
+  <path class="flow-arrow" d="M380,865 L420,865"/>
+
+  <rect class="flow-step" x="420" y="840" width="150" height="50"/>
+  <text class="flow-label" x="450" y="863">Seleccionar resultado</text>
+  <text class="flow-sublabel" x="450" y="877">Hasta 6 opciones</text>
+  <text style="font-size:16px" x="428" y="871">📍</text>
+
+  <path class="flow-arrow" d="M570,865 L610,865"/>
+
+  <rect class="flow-step action" x="610" y="840" width="150" height="50"/>
+  <text class="flow-label" x="640" y="863">Guardar lat/lng</text>
+  <text class="flow-sublabel" x="640" y="877">Hidden fields → DB</text>
+  <text style="font-size:16px" x="618" y="871">📌</text>
+
+  <path class="flow-arrow" d="M760,865 L800,865"/>
+
+  <rect class="flow-step db" x="800" y="840" width="170" height="50"/>
+  <text class="flow-label" x="830" y="863">Mapa Leaflet</text>
+  <text class="flow-sublabel" x="830" y="877">Markers + popups + zoom</text>
+  <text style="font-size:16px" x="808" y="871">🗺️</text>
+
+  <!-- City filter note -->
+  <rect x="220" y="900" width="540" height="35" rx="6" fill="#c8a455" opacity="0.08" stroke="#c8a455" stroke-width="0.5"/>
+  <text style="font-size:9px;fill:#c8a455" x="235" y="922">Ciudad→Zona cascading: al cambiar ciudad se actualizan las zonas disponibles (ZONAS_POR_CIUDAD en shared.js, 10 ciudades, 61 barrios)</text>
+
+</svg>
+</div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const sections = ['arch', 'erd', 'flow'];
+    t.classList.toggle('active', sections[i] === id);
+  });
+  document.querySelectorAll('.section').forEach(s => {
+    s.classList.toggle('active', s.id === id);
+  });
+}
+</script>
+
+</body>
+</html>
