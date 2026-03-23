@@ -15,9 +15,20 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 
-DB_PATH = BASE_DIR / "inmobiliaria.db"
-UPLOAD_DIR = BASE_DIR / "static" / "uploads"
+# En Railway usamos el volume persistente montado en /app/data
+# En local usamos el directorio del proyecto
+DATA_DIR = Path("/app/data") if Path("/app/data").exists() else BASE_DIR
+DB_PATH = DATA_DIR / "inmobiliaria.db"
+UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Symlink para que FastAPI sirva las fotos como estáticos aunque estén en /app/data
+STATIC_UPLOADS = BASE_DIR / "static" / "uploads"
+if not STATIC_UPLOADS.exists():
+    try:
+        STATIC_UPLOADS.symlink_to(UPLOAD_DIR)
+    except Exception:
+        STATIC_UPLOADS.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="Inmobiliaria Reyna")
 app.mount("/static", StaticFiles(directory="static"), name="static")
