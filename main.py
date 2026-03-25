@@ -19,6 +19,11 @@ load_dotenv(dotenv_path=BASE_DIR / ".env")
 # En local usamos el directorio del proyecto
 DATA_DIR = Path("/app/data") if Path("/app/data").exists() else BASE_DIR
 DB_PATH = DATA_DIR / "inmobiliaria.db"
+
+# Si el volume está vacío, copiar la DB inicial del repo (seed)
+_seed_db = BASE_DIR / "inmobiliaria.db"
+if not DB_PATH.exists() and _seed_db.exists() and DATA_DIR != BASE_DIR:
+    shutil.copy2(_seed_db, DB_PATH)
 UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
