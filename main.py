@@ -20,10 +20,21 @@ load_dotenv(dotenv_path=BASE_DIR / ".env")
 DATA_DIR = Path("/app/data") if Path("/app/data").exists() else BASE_DIR
 DB_PATH = DATA_DIR / "inmobiliaria.db"
 
-# Si el volume está vacío, copiar la DB inicial del repo (seed)
+# Si el volume no tiene datos, copiar la DB inicial del repo (seed)
 _seed_db = BASE_DIR / "inmobiliaria.db"
-if not DB_PATH.exists() and _seed_db.exists() and DATA_DIR != BASE_DIR:
-    shutil.copy2(_seed_db, DB_PATH)
+if _seed_db.exists() and DATA_DIR != BASE_DIR:
+    # Copiar si no existe O si existe pero está vacía (sin propiedades)
+    _do_seed = not DB_PATH.exists()
+    if not _do_seed and DB_PATH.exists():
+        try:
+            _c = sqlite3.connect(str(DB_PATH))
+            _n = _c.execute("SELECT COUNT(*) FROM propiedades").fetchone()[0]
+            _c.close()
+            _do_seed = (_n == 0)
+        except Exception:
+            _do_seed = True
+    if _do_seed:
+        shutil.copy2(_seed_db, DB_PATH)
 UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
