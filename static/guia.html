@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de uso · Inmobiliaria Reyna</title>
+  <link rel="icon" type="image/png" href="/static/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal: #1a6b5a;
+      --teal-light: #2e9b89;
+      --teal-pale: #e8f5f2;
+      --gold: #c8a455;
+      --bg: #f7f8fa;
+      --white: #ffffff;
+      --text: #1e2a22;
+      --text-dim: #6b7a70;
+      --border: #e2e8e5;
+      --shadow: 0 2px 12px rgba(0,0,0,.07);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: var(--teal);
+      color: white;
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2em;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 1.05em;
+      opacity: .85;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: .8em;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* Nav */
+    .nav {
+      background: var(--white);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .nav a {
+      padding: 16px 18px;
+      text-decoration: none;
+      color: var(--text-dim);
+      font-size: .9em;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all .2s;
+    }
+    .nav a:hover { color: var(--teal); border-bottom-color: var(--teal); }
+
+    /* Content */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 60px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--teal-pale);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6em;
+      flex-shrink: 0;
+    }
+    .section-title h2 {
+      font-size: 1.4em;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+    .section-title p {
+      font-size: .9em;
+      color: var(--text-dim);
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform .15s;
+    }
+    .step:hover { transform: translateX(4px); }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      background: var(--teal);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .95em;
+      flex-shrink: 0;
+    }
+    .step-body { flex: 1; }
+    .step-body strong {
+      display: block;
+      font-size: 1em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .step-body p {
+      font-size: .9em;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .step-body .tip {
+      margin-top: 8px;
+      background: var(--teal-pale);
+      border-left: 3px solid var(--teal);
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: .85em;
+      color: var(--teal);
+    }
+    .step-body .tip strong { color: var(--teal); display: inline; }
+
+    /* Tip box */
+    .tip-box {
+      background: #fffbf0;
+      border: 1px solid #f0d98a;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      font-size: .9em;
+      color: #7a6520;
+    }
+    .tip-box strong { color: #c8a455; }
+
+    /* Pill tags */
+    .pill {
+      display: inline-block;
+      background: var(--teal-pale);
+      color: var(--teal);
+      font-size: .78em;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin: 2px;
+    }
+    .pill.gold { background: #fdf6e3; color: #a07830; }
+    .pill.red { background: #fef0ef; color: #c0392b; }
+
+    /* Grid shortcuts */
+    .shortcuts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .shortcut {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .shortcut .sc-icon { font-size: 1.8em; margin-bottom: 8px; }
+    .shortcut strong { display: block; font-size: .95em; color: var(--text); margin-bottom: 4px; }
+    .shortcut span { font-size: .82em; color: var(--text-dim); }
+
+    /* URL box */
+    .url-box {
+      background: #1e2a22;
+      color: #7fff98;
+      font-family: monospace;
+      font-size: .95em;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin: 14px 0;
+      word-break: break-all;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--teal);
+      color: rgba(255,255,255,.7);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: .9em;
+    }
+    .footer strong { color: white; }
+
+    @media (max-width: 600px) {
+      .header h1 { font-size: 1.7em; }
+      .step { flex-direction: column; }
+      .step-num { width: 30px; height: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">Guía de uso</div>
+  <h1>Inmobiliaria Reyna</h1>
+  <p>Todo lo que necesitas saber para usar el programa sin complicaciones</p>
+</div>
+
+<nav class="nav">
+  <a href="#inicio">🏠 Inicio</a>
+  <a href="#nueva">➕ Nueva propiedad</a>
+  <a href="#crm">📋 Ver propiedades</a>
+  <a href="#detalle">🔍 Detalle</a>
+  <a href="#contactos">👥 Contactos</a>
+  <a href="#web">🌐 Web pública</a>
+  <a href="#consejos">💡 Consejos</a>
+</nav>
+
+<div class="content">
+
+  <!-- INICIO -->
+  <div class="section" id="inicio">
+    <div class="section-header">
+      <div class="section-icon">🏠</div>
+      <div class="section-title">
+        <h2>¿Por dónde empiezo?</h2>
+        <p>Las páginas del programa y para qué sirve cada una</p>
+      </div>
+    </div>
+
+    <div class="shortcuts">
+      <div class="shortcut">
+        <div class="sc-icon">➕</div>
+        <strong>Generar</strong>
+        <span>Añadir una nueva propiedad al CRM con textos automáticos</span>
+      </div>
+      <div class="shortcut">
+        <div class="sc-icon">📋</div>
+        <strong>Propiedades</strong>
+        <span>Ver y gestionar todas las propiedades del CRM</span>
+      </div>
+      <div class="shortcut">
+        <div class="sc-icon">👥</div>
+        <strong>Contactos</strong>
+        <span>Clientes interesados y sus preferencias de búsqueda</span>
+      </div>
+      <div class="shortcut">
+        <div class="sc-icon">🌐</div>
+        <strong>Web</strong>
+        <span>La página pública que ven tus clientes</span>
+      </div>
+    </div>
+
+    <div class="tip-box" style="margin-top: 20px;">
+      <strong>💡 Acceso rápido:</strong> Usa el menú de arriba para moverte entre secciones. Siempre puedes volver al inicio desde el logo.
+    </div>
+  </div>
+
+  <!-- NUEVA PROPIEDAD -->
+  <div class="section" id="nueva">
+    <div class="section-header">
+      <div class="section-icon">➕</div>
+      <div class="section-title">
+        <h2>Añadir una nueva propiedad</h2>
+        <p>Página principal → botón "Generar"</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Rellena los datos básicos</strong>
+          <p>Tipo de propiedad, si es venta o alquiler, ciudad, dirección y zona/barrio. La dirección tiene autocompletado — empieza a escribir y selecciona la sugerencia.</p>
+          <div class="tip">✅ Al seleccionar la dirección del desplegable, el mapa se actualiza automáticamente con las coordenadas exactas.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Precio y superficie</strong>
+          <p>Rellena el precio (en euros), los metros útiles, construidos, número de habitaciones y baños.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Marca los extras (amenidades)</strong>
+          <p>Marca con un tick todo lo que tenga la propiedad: terraza, parking, piscina, ascensor, aire acondicionado, etc. Cuanto más completes, mejores serán los textos generados.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Añade las fotos</strong>
+          <p>Arrastra las fotos o haz clic en el área de subida. Puedes subir varias a la vez. La primera foto será la portada.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <strong>Elige cómo guardar</strong>
+          <p>Tienes dos botones al final:</p>
+          <p><span class="pill">Guardar</span> — Guarda la propiedad en el CRM sin textos de IA.</p>
+          <p><span class="pill gold">Guardar y Generar Anuncios</span> — Guarda Y genera automáticamente título, descripción, copy de Instagram y mensaje de WhatsApp con inteligencia artificial.</p>
+          <div class="tip">⭐ <strong>Recomendado:</strong> Usa siempre "Guardar y Generar Anuncios" para tener todos los textos listos al instante.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRM -->
+  <div class="section" id="crm">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <div class="section-title">
+        <h2>Ver y gestionar propiedades</h2>
+        <p>Menú → "Propiedades"</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Buscar propiedades</strong>
+          <p>Usa la barra de búsqueda para encontrar propiedades por ciudad, dirección, tipo o referencia (ej: RI-2026-0001).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Filtrar por estado</strong>
+          <p>Filtra para ver solo las propiedades que te interesan:</p>
+          <p>
+            <span class="pill">Activo</span> En el mercado
+            <span class="pill gold">Vendido</span> Ya vendido
+            <span class="pill red">Retirado</span> Retirado del mercado
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Vista mapa</strong>
+          <p>Haz clic en el botón 🗺️ "Mapa" para ver todas las propiedades ubicadas en el mapa. Haz clic en un marcador para ver el resumen de esa propiedad.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Haz clic en cualquier propiedad</strong>
+          <p>Se abre el panel de detalle con toda la información, fotos, textos generados, interesados y mapa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETALLE -->
+  <div class="section" id="detalle">
+    <div class="section-header">
+      <div class="section-icon">🔍</div>
+      <div class="section-title">
+        <h2>Panel de detalle de propiedad</h2>
+        <p>Qué puedes hacer dentro de cada propiedad</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">✏️</div>
+        <div class="step-body">
+          <strong>Editar datos</strong>
+          <p>Botón "Editar" → cambia cualquier dato: precio, dirección, habitaciones, estado, etc. Guarda con el botón verde.</p>
+          <div class="tip">Para cambiar el estado a Vendido o Retirado, usa el botón de estado directamente en el panel sin necesidad de entrar a editar.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">📸</div>
+        <div class="step-body">
+          <strong>Tab "Fotos"</strong>
+          <p>Añade o elimina fotos. Para cambiar la portada, haz clic en el icono ⭐ sobre la foto deseada.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">📝</div>
+        <div class="step-body">
+          <strong>Tab "Descripciones"</strong>
+          <p>Aquí están todos los textos generados por IA: título, descripción, copy de Instagram y mensaje de WhatsApp. Puedes:</p>
+          <p>— Editarlos directamente haciendo clic en el texto<br>
+          — Copiarlos con el botón 📋<br>
+          — Regenerarlos si no te convencen con el botón 🔄</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">👤</div>
+        <div class="step-body">
+          <strong>Interesados</strong>
+          <p>Registra quién está interesado en la propiedad: nombre, teléfono, fecha de visita, oferta económica y resultado (pendiente, compra, descartado).</p>
+          <div class="tip">💡 Al añadir un interesado, se crea automáticamente como contacto en el sistema.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🗺️</div>
+        <div class="step-body">
+          <strong>Mapa de ubicación</strong>
+          <p>Al final del panel verás la ubicación exacta de la propiedad en el mapa. Si la dirección fue verificada con el autocompletado, el pin estará en el lugar exacto.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🤝</div>
+        <div class="step-body">
+          <strong>Tab "Matches"</strong>
+          <p>El sistema busca automáticamente qué contactos de tu base de datos podrían estar interesados en esta propiedad según sus preferencias guardadas. Aparecen ordenados por porcentaje de compatibilidad.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACTOS -->
+  <div class="section" id="contactos">
+    <div class="section-header">
+      <div class="section-icon">👥</div>
+      <div class="section-title">
+        <h2>Gestión de contactos</h2>
+        <p>Menú → "Contactos"</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Añadir un contacto</strong>
+          <p>Rellena nombre, teléfono y email. Lo más importante son las <strong>preferencias</strong>: qué tipo de propiedad busca, en qué ciudad, con qué presupuesto y cuántas habitaciones necesita.</p>
+          <div class="tip">Cuanto más detalladas las preferencias, más preciso es el matching automático.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Ver propiedades para un contacto</strong>
+          <p>Haz clic en el botón 🎯 "Ver matches" dentro de un contacto. El sistema busca todas las propiedades que encajan con sus preferencias y te las muestra ordenadas de mayor a menor compatibilidad.</p>
+          <div class="tip">⚠️ El precio máximo tiene un margen del +20%. Si un contacto busca hasta 100.000€, solo verá propiedades de hasta 120.000€.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Editar o eliminar un contacto</strong>
+          <p>Haz clic en el contacto para abrir su ficha y usa los botones de editar ✏️ o eliminar 🗑️.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEB PÚBLICA -->
+  <div class="section" id="web">
+    <div class="section-header">
+      <div class="section-icon">🌐</div>
+      <div class="section-title">
+        <h2>Web pública para clientes</h2>
+        <p>Lo que ven tus clientes al entrar a tu web</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">🌐</div>
+        <div class="step-body">
+          <strong>Acceso</strong>
+          <p>La web pública está en:</p>
+          <div class="url-box">https://inmobiliaria-reyna-production.up.railway.app/static/web.html</div>
+          <p>Puedes compartir este enlace con clientes. Solo verán las propiedades en estado <span class="pill">Activo</span>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🔍</div>
+        <div class="step-body">
+          <strong>Los clientes pueden filtrar</strong>
+          <p>Por tipo de propiedad, operación (compra/alquiler), precio máximo y número de habitaciones.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">📄</div>
+        <div class="step-body">
+          <strong>Ficha de propiedad</strong>
+          <p>Al hacer clic en una propiedad, el cliente ve la ficha completa con fotos, descripción, características y un botón de contacto por WhatsApp.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🖨️</div>
+        <div class="step-body">
+          <strong>Cartel para imprimir</strong>
+          <p>Desde el detalle de cualquier propiedad en el CRM, puedes generar un cartel A4 listo para imprimir y poner en el escaparate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSEJOS -->
+  <div class="section" id="consejos">
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <div class="section-title">
+        <h2>Consejos y preguntas frecuentes</h2>
+        <p>Trucos para sacarle el máximo partido</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">💡</div>
+        <div class="step-body">
+          <strong>¿Cómo cambio el estado de una propiedad a Vendido?</strong>
+          <p>Abre el detalle de la propiedad → haz clic en el botón de estado (el que pone "Activo" en verde) → selecciona "Vendido" o "Retirado". La propiedad desaparece de la web pública automáticamente.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">💡</div>
+        <div class="step-body">
+          <strong>¿Los textos de IA se pueden cambiar?</strong>
+          <p>Sí. En la pestaña "Descripciones" del detalle puedes editar cualquier texto directamente. También puedes regenerarlos si no te gustan.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">💡</div>
+        <div class="step-body">
+          <strong>¿Cómo copio el texto para Instagram?</strong>
+          <p>Abre el detalle → pestaña "Descripciones" → haz clic en el botón 📋 junto al copy de Instagram. Ya lo tienes copiado, solo pégalo en tu móvil.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">💡</div>
+        <div class="step-body">
+          <strong>¿Qué es la referencia RI-XXXX-XXXX?</strong>
+          <p>Es el número único de cada propiedad que genera el sistema automáticamente. Úsala para identificar propiedades rápidamente con clientes o en documentos.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">💡</div>
+        <div class="step-body">
+          <strong>¿Los datos se guardan aunque cierre el ordenador?</strong>
+          <p>Sí. Todo está guardado en el servidor de Railway. Puedes acceder desde cualquier dispositivo con internet.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">⚠️</div>
+        <div class="step-body">
+          <strong>La dirección no aparece en el mapa</strong>
+          <p>Asegúrate de seleccionar la dirección desde el desplegable de sugerencias al escribir — no la escribas manualmente. Si ya la tienes guardada sin coordenadas, edita la propiedad y vuelve a seleccionar la dirección del autocompletado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box" style="margin-top: 28px;">
+      <strong>🚀 Flujo de trabajo recomendado para una nueva propiedad:</strong><br><br>
+      1. Ir a <strong>Generar</strong> → rellenar datos → subir fotos → <strong>"Guardar y Generar Anuncios"</strong><br>
+      2. Abrir la propiedad en el CRM → revisar textos en la pestaña <strong>Descripciones</strong><br>
+      3. Copiar el copy de Instagram y publicar 📱<br>
+      4. Comprobar los <strong>Matches</strong> → llamar a los contactos interesados ☎️<br>
+      5. Cuando haya visitas, añadirlas en <strong>Interesados</strong>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>Inmobiliaria Reyna</strong> · Zamora · CRM interno v1.0<br>
+  <span style="font-size:.85em;opacity:.7;margin-top:4px;display:block">Para cualquier incidencia técnica, contacta con el desarrollador.</span>
+</div>
+
+</body>
+</html>
