@@ -157,6 +157,11 @@ def init_db():
         conn.execute("ALTER TABLE contactos ADD COLUMN preferencias TEXT DEFAULT '{}'")
     except Exception:
         pass
+    # Soft-delete column
+    try:
+        conn.execute("ALTER TABLE propiedades ADD COLUMN borrado INTEGER DEFAULT 0")
+    except Exception:
+        pass
     conn.commit()
     conn.close()
 
@@ -523,7 +528,7 @@ async def list_properties(
     precio_max: str = "",
 ):
     conn = get_db()
-    sql = "SELECT * FROM propiedades WHERE 1=1"
+    sql = "SELECT * FROM propiedades WHERE (borrado = 0 OR borrado IS NULL)"
     params = []
 
     if q:
@@ -569,16 +574,50 @@ async def delete_property(property_id: int):
     if not row:
         conn.close()
         raise HTTPException(status_code=404, detail="Propiedad no encontrada")
+    # Soft delete — moves to trash, keeps photos on disk
+    conn.execute("UPDATE propiedades SET borrado = 1 WHERE id = ?", (property_id,))
+    conn.commit()
+    conn.close()
+    return JSONResponse({"message": "Propiedad movida a la papelera"})
 
-    # Delete photos from disk
+
+@app.get("/api/papelera")
+async def list_trash():
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM propiedades WHERE borrado = 1 ORDER BY created_at DESC"
+    ).fetchall()
+    conn.close()
+    return JSONResponse([row_to_dict(r) for r in rows])
+
+
+@app.post("/api/propiedades/{property_id}/restaurar")
+async def restore_property(property_id: int):
+    conn = get_db()
+    row = conn.execute("SELECT id FROM propiedades WHERE id = ?", (property_id,)).fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Propiedad no encontrada")
+    conn.execute("UPDATE propiedades SET borrado = 0 WHERE id = ?", (property_id,))
+    conn.commit()
+    conn.close()
+    return JSONResponse({"message": "Propiedad restaurada"})
+
+
+@app.delete("/api/propiedades/{property_id}/permanente")
+async def delete_property_permanent(property_id: int):
+    conn = get_db()
+    row = conn.execute("SELECT id FROM propiedades WHERE id = ?", (property_id,)).fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Propiedad no encontrada")
     prop_dir = UPLOAD_DIR / str(property_id)
     if prop_dir.exists():
         shutil.rmtree(prop_dir)
-
     conn.execute("DELETE FROM propiedades WHERE id = ?", (property_id,))
     conn.commit()
     conn.close()
-    return JSONResponse({"message": "Propiedad eliminada"})
+    return JSONResponse({"message": "Propiedad eliminada permanentemente"})
 
 
 # ── Editar propiedad completa ────────────────────

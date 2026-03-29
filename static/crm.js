@@ -1038,6 +1038,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:flex;gap:10px;margin-top:8px">
             <button type="submit" class="btn-gold" style="flex:1;border:none;cursor:pointer;font-family:inherit;padding:12px;font-size:14px;font-weight:700;border-radius:var(--radius)">Guardar cambios</button>
             <button type="button" class="btn-regenerate" onclick="viewDetail(${propId})" style="flex:0">Cancelar</button>
+            <button type="button" class="btn-delete-prop" onclick="deletePropFromEdit(${propId})" style="flex:0">🗑️ Borrar</button>
           </div>
         </form>
       `;
@@ -1233,13 +1234,75 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closeModal = function() { modal.style.display = 'none'; };
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-  // ── Delete property ────────────────────────────────
+  // ── Delete property (move to trash) ───────────────
   window.deleteProp = async function(id) {
-    if (!confirm('¿Eliminar esta propiedad? Se borrarán también las fotos.')) return;
+    if (!confirm('¿Mover esta propiedad a la papelera? Podrás recuperarla después.')) return;
     try {
       await fetch(`/api/propiedades/${id}`, { method: 'DELETE' });
-      showToast('Propiedad eliminada');
+      showToast('Propiedad movida a la papelera');
+      closeModal();
       loadProperties();
+    } catch { alert('Error al eliminar'); }
+  };
+
+  window.deletePropFromEdit = async function(id) {
+    if (!confirm('¿Mover esta propiedad a la papelera? Podrás recuperarla después.')) return;
+    try {
+      await fetch(`/api/propiedades/${id}`, { method: 'DELETE' });
+      showToast('Propiedad movida a la papelera');
+      closeModal();
+      loadProperties();
+    } catch { alert('Error al eliminar'); }
+  };
+
+  // ── Papelera ───────────────────────────────────────
+  window.openPapelera = async function() {
+    try {
+      const res = await fetch('/api/papelera');
+      const props = await res.json();
+
+      modalBody.innerHTML = `
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title">🗑️ Papelera</h2>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Propiedades borradas. Puedes restaurarlas o eliminarlas definitivamente.</p>
+        ${props.length === 0
+          ? '<p style="text-align:center;color:var(--text-muted);padding:32px">La papelera está vacía</p>'
+          : `<div style="display:flex;flex-direction:column;gap:10px">
+              ${props.map(p => `
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border-light);border-radius:var(--radius);background:var(--white)">
+                  ${p.fotos && p.fotos.length ? `<img src="${p.fotos[0]}" style="width:56px;height:56px;object-fit:cover;border-radius:6px;flex-shrink:0">` : '<div style="width:56px;height:56px;background:var(--bg);border-radius:6px;flex-shrink:0"></div>'}
+                  <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.titulo || p.tipo_propiedad + ' en ' + p.ciudad)}</div>
+                    <div style="font-size:12px;color:var(--text-muted)">${esc(p.tipo_propiedad)} · ${esc(p.ciudad)} · ${formatPrice(p.precio)} €</div>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-shrink:0">
+                    <button class="btn-estado" style="background:var(--accent);color:#fff;font-size:12px" onclick="restaurarProp(${p.id})">↩️ Restaurar</button>
+                    <button class="btn-delete-prop" style="font-size:12px" onclick="borrarDefinitivo(${p.id})">✕ Borrar</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>`
+        }
+      `;
+      modal.style.display = 'flex';
+    } catch { alert('Error al cargar la papelera'); }
+  };
+
+  window.restaurarProp = async function(id) {
+    try {
+      await fetch(`/api/propiedades/${id}/restaurar`, { method: 'POST' });
+      showToast('Propiedad restaurada');
+      loadProperties();
+      openPapelera();
+    } catch { alert('Error al restaurar'); }
+  };
+
+  window.borrarDefinitivo = async function(id) {
+    if (!confirm('¿Eliminar definitivamente? Esta acción no se puede deshacer.')) return;
+    try {
+      await fetch(`/api/propiedades/${id}/permanente`, { method: 'DELETE' });
+      showToast('Propiedad eliminada definitivamente');
+      openPapelera();
     } catch { alert('Error al eliminar'); }
   };
 
