@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fotos = p.fotos || [];
       const fotosHTML = fotos.length
-        ? `<div class="modal-photos">${fotos.map(f => `<img src="${f}" alt="Foto">`).join('')}</div>`
+        ? `<div class="modal-photos">${fotos.slice(0, 2).map(f => `<img src="${f}" alt="Foto">`).join('')}</div>`
         : '';
 
       const est = ESTADOS[p.estado] || ESTADOS.activo;
