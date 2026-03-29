@@ -38,15 +38,9 @@ if _seed_db.exists() and DATA_DIR != BASE_DIR:
 UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-# Symlink para que FastAPI sirva las fotos como estáticos aunque estén en /app/data
-STATIC_UPLOADS = BASE_DIR / "static" / "uploads"
-if not STATIC_UPLOADS.exists():
-    try:
-        STATIC_UPLOADS.symlink_to(UPLOAD_DIR)
-    except Exception:
-        STATIC_UPLOADS.mkdir(parents=True, exist_ok=True)
-
 app = FastAPI(title="Inmobiliaria Reyna")
+# Montar uploads ANTES de /static para que tenga prioridad (Railway volume)
+app.mount("/static/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
