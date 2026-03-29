@@ -1934,6 +1934,26 @@ textarea.result-editable:focus {
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--border-light);
+  cursor: grab;
+  transition: transform .15s, box-shadow .15s;
+}
+.detail-photo-item:active { cursor: grabbing; }
+.detail-photo-item.drag-over {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 8px rgba(200,164,85,.4);
+  transform: scale(1.03);
+}
+.photo-drag-handle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0,0,0,.5);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  pointer-events: none;
 }
 .detail-photo-item img {
   width: 100%;

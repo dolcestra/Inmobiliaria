@@ -440,6 +440,11 @@ async def save_property(
     if not direccion or direccion.strip() == "" or direccion == "Sin especificar":
         raise HTTPException(status_code=400, detail="La dirección es obligatoria")
 
+    # Auto-generate title if empty
+    if not titulo or not titulo.strip():
+        location = zona or direccion.split(",")[0].strip()
+        titulo = f"{tipo_propiedad} en {location}"[:70]
+
     conn = get_db()
 
     # Auto-generate internal reference: RI-YYYYMM-NNNN
@@ -609,6 +614,7 @@ async def update_property(
     longitud: Annotated[Optional[str], Form()] = None,
     fotos_nuevas: List[UploadFile] = File(default=[]),
     fotos_eliminar: Annotated[Optional[str], Form()] = None,
+    fotos_orden: Annotated[Optional[str], Form()] = None,
 ):
     conn = get_db()
     row = conn.execute("SELECT * FROM propiedades WHERE id = ?", (property_id,)).fetchone()
@@ -679,6 +685,16 @@ async def update_property(
             content = await foto.read()
             filepath.write_bytes(content)
             existing_fotos.append(f"/static/uploads/{property_id}/{filename}")
+
+    # Apply custom photo order if provided
+    if fotos_orden:
+        try:
+            new_order = json.loads(fotos_orden)
+            # Only accept valid reorders (same photos, different order)
+            if set(new_order) == set(existing_fotos) and len(new_order) == len(existing_fotos):
+                existing_fotos = new_order
+        except (json.JSONDecodeError, Exception):
+            pass
 
     # Always save fotos (may have changed via delete or add)
     conn.execute("UPDATE propiedades SET fotos = ? WHERE id = ?", (json.dumps(existing_fotos), property_id))

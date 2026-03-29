@@ -350,13 +350,15 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="modal-tab-content" id="tab-fotos-${p.id}">
           <div class="modal-section">
             <div class="modal-section-title">Fotos de la propiedad (${fotos.length})</div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Arrastra las fotos para cambiar el orden. La primera es la portada.</p>
             <div class="detail-photos-grid" id="detail-photos-grid-${p.id}">
               ${fotos.length
                 ? fotos.map((f, i) => `
-                  <div class="detail-photo-item" id="detail-photo-${p.id}-${i}">
-                    <img src="${f}" alt="Foto ${i+1}">
+                  <div class="detail-photo-item" draggable="true" data-src="${f}" data-prop="${p.id}" id="detail-photo-${p.id}-${i}">
+                    <img src="${f}" alt="Foto ${i+1}" draggable="false">
                     <button type="button" class="edit-photo-delete" onclick="deleteDetailPhoto(${p.id}, '${f}', ${i})" title="Eliminar foto">&times;</button>
                     ${i === 0 ? '<span class="portada-badge-sm">★ Portada</span>' : ''}
+                    <span class="photo-drag-handle">⠿</span>
                   </div>
                 `).join('')
                 : '<p style="color:var(--text-muted);font-size:13px">Sin fotos</p>'
@@ -779,6 +781,84 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btn) { btn.disabled = false; btn.textContent = 'Subir fotos'; }
     }
   };
+
+  // ── Drag & drop reorder photos ─────────────────
+  (function initDragDrop() {
+    let dragItem = null;
+
+    document.addEventListener('dragstart', function(e) {
+      const item = e.target.closest('.detail-photo-item[draggable]');
+      if (!item) return;
+      dragItem = item;
+      item.style.opacity = '0.4';
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    document.addEventListener('dragend', function(e) {
+      const item = e.target.closest('.detail-photo-item[draggable]');
+      if (item) item.style.opacity = '1';
+      document.querySelectorAll('.detail-photo-item').forEach(el => el.classList.remove('drag-over'));
+      dragItem = null;
+    });
+
+    document.addEventListener('dragover', function(e) {
+      const item = e.target.closest('.detail-photo-item[draggable]');
+      if (!item || item === dragItem) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      item.classList.add('drag-over');
+    });
+
+    document.addEventListener('dragleave', function(e) {
+      const item = e.target.closest('.detail-photo-item[draggable]');
+      if (item) item.classList.remove('drag-over');
+    });
+
+    document.addEventListener('drop', async function(e) {
+      const target = e.target.closest('.detail-photo-item[draggable]');
+      if (!target || !dragItem || target === dragItem) return;
+      e.preventDefault();
+      target.classList.remove('drag-over');
+
+      const grid = target.closest('.detail-photos-grid');
+      const items = [...grid.querySelectorAll('.detail-photo-item')];
+      const fromIdx = items.indexOf(dragItem);
+      const toIdx = items.indexOf(target);
+
+      // Reorder in DOM
+      if (fromIdx < toIdx) {
+        grid.insertBefore(dragItem, target.nextSibling);
+      } else {
+        grid.insertBefore(dragItem, target);
+      }
+
+      // Get new order and save
+      const newOrder = [...grid.querySelectorAll('.detail-photo-item')].map(el => el.dataset.src);
+      const propId = dragItem.dataset.prop;
+
+      // Update portada badges
+      grid.querySelectorAll('.portada-badge-sm').forEach(b => b.remove());
+      const first = grid.querySelector('.detail-photo-item');
+      if (first) {
+        const badge = document.createElement('span');
+        badge.className = 'portada-badge-sm';
+        badge.textContent = '★ Portada';
+        first.appendChild(badge);
+      }
+
+      // Save new order to backend
+      try {
+        const fd = new FormData();
+        fd.append('fotos_orden', JSON.stringify(newOrder));
+        const res = await fetch(`/api/propiedades/${propId}`, { method: 'PATCH', body: fd });
+        if (!res.ok) throw new Error('Error');
+        showToast('Orden de fotos actualizado');
+        loadProperties();
+      } catch (err) {
+        showToast('Error al guardar orden');
+      }
+    });
+  })();
 
   // ── Modal de edición de propiedad ────────────────
   window.openEditModal = async function(propId) {
