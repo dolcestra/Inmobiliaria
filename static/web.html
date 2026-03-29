@@ -138,39 +138,6 @@
     .web-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .web-empty p { font-size: 16px; }
 
-    /* Servicios */
-    .web-servicios {
-      max-width: 1200px; margin: 0 auto; padding: 48px 24px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px;
-    }
-    .servicio-card {
-      background: var(--white); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
-      padding: 28px 24px; text-align: center; box-shadow: var(--shadow); transition: all .2s;
-    }
-    .servicio-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-    .servicio-icon { font-size: 36px; margin-bottom: 12px; }
-    .servicio-title { font-family: var(--font-heading); font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
-    .servicio-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
-
-    /* Sobre nosotros */
-    .web-about {
-      max-width: 800px; margin: 0 auto; padding: 48px 24px; text-align: center;
-    }
-    .web-about h2 { font-family: var(--font-heading); font-size: 28px; margin-bottom: 16px; color: var(--text-primary); }
-    .web-about p { font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
-
-    /* Horarios */
-    .web-horarios {
-      max-width: 600px; margin: 0 auto 40px; background: var(--white); border: 1px solid var(--border-light);
-      border-radius: var(--radius-lg); padding: 24px 32px; box-shadow: var(--shadow);
-    }
-    .web-horarios h3 { font-family: var(--font-heading); font-size: 18px; margin-bottom: 12px; text-align: center; color: var(--text-primary); }
-    .horario-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; border-bottom: 1px solid var(--border-light); }
-    .horario-row:last-child { border-bottom: none; }
-    .horario-row .dia { font-weight: 600; color: var(--text-primary); }
-    .horario-row .horas { color: var(--text-secondary); }
-    .horario-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: .5px; margin: 12px 0 6px; }
-
     /* Footer */
     .web-footer {
       background: var(--text-primary); color: rgba(255,255,255,.7); padding: 48px 24px 32px;
@@ -219,9 +186,6 @@
   <div class="web-header-right">
     <nav class="web-header-nav">
       <a href="#propiedades">Propiedades</a>
-      <a href="#servicios">Servicios</a>
-      <a href="#nosotros">Sobre nosotros</a>
-      <a href="#contacto">Contacto</a>
     </nav>
     <div class="web-contact-info">📞 <strong>980 53 35 36</strong></div>
     <a class="btn-wa-header" href="https://wa.me/34628488877" target="_blank">💬 WhatsApp</a>
@@ -300,50 +264,6 @@
     <p>No hay propiedades disponibles con esos filtros.</p>
   </div>
 </main>
-
-<!-- Servicios -->
-<section class="web-servicios" id="servicios">
-  <div class="servicio-card">
-    <div class="servicio-icon">🏠</div>
-    <div class="servicio-title">Compra y Venta</div>
-    <div class="servicio-desc">Te acompañamos en todo el proceso de compraventa. Asesoramiento completo desde la búsqueda hasta la firma ante notario.</div>
-  </div>
-  <div class="servicio-card">
-    <div class="servicio-icon">🔑</div>
-    <div class="servicio-title">Alquiler</div>
-    <div class="servicio-desc">Gestionamos el alquiler de tu propiedad. Selección de inquilinos, contratos y seguimiento durante toda la vigencia.</div>
-  </div>
-  <div class="servicio-card">
-    <div class="servicio-icon">📊</div>
-    <div class="servicio-title">Tasaciones</div>
-    <div class="servicio-desc">Tasaciones profesionales y precisas para conocer el valor real de tu inmueble en el mercado actual de Zamora.</div>
-  </div>
-  <div class="servicio-card">
-    <div class="servicio-icon">💼</div>
-    <div class="servicio-title">Asesoría Inmobiliaria</div>
-    <div class="servicio-desc">Consultoría personalizada para inversiones, herencias, hipotecas y cualquier trámite relacionado con tu propiedad.</div>
-  </div>
-</section>
-
-<!-- Sobre nosotros -->
-<section class="web-about" id="nosotros">
-  <h2>Tu inmobiliaria de confianza</h2>
-  <p>Desde 1998, hemos ayudado a más de 2.000 vecinos a encontrar su hogar ideal en Zamora. Nos enorgullece ser parte de esta comunidad y ofrecer un trato cercano y personalizado.</p>
-  <p>Especializados en pisos, apartamentos, estudios, viviendas unifamiliares, chalets, fincas, locales y terrenos en Zamora y provincia. Cada propiedad la tratamos con la misma dedicación, porque sabemos que encontrar un hogar es una de las decisiones más importantes de tu vida.</p>
-</section>
-
-<!-- Horarios -->
-<section id="contacto">
-  <div class="web-horarios">
-    <h3>Horario de atención</h3>
-    <div class="horario-label">Invierno</div>
-    <div class="horario-row"><span class="dia">Lunes a Viernes</span><span class="horas">10:00 - 14:00 y 17:00 - 20:00</span></div>
-    <div class="horario-row"><span class="dia">Sábados</span><span class="horas">10:00 - 13:00</span></div>
-    <div class="horario-label">Verano</div>
-    <div class="horario-row"><span class="dia">Lunes a Viernes</span><span class="horas">10:00 - 16:00 y 18:00 - 20:30</span></div>
-    <div class="horario-row"><span class="dia">Sábados</span><span class="horas">10:00 - 13:00</span></div>
-  </div>
-</section>
 
 <footer class="web-footer">
   <div class="web-footer-inner">
