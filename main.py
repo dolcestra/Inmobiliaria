@@ -143,7 +143,7 @@ def init_db():
     except Exception:
         pass
     # New property columns
-    for col, default in [("referencia", "TEXT"), ("latitud", "REAL"), ("longitud", "REAL"), ("ref_catastral", "TEXT"), ("zona", "TEXT")]:
+    for col, default in [("referencia", "TEXT"), ("latitud", "REAL"), ("longitud", "REAL"), ("ref_catastral", "TEXT"), ("zona", "TEXT"), ("referencia_interna", "TEXT")]:
         try:
             conn.execute(f"ALTER TABLE propiedades ADD COLUMN {col} {default}")
         except Exception:
@@ -438,6 +438,7 @@ async def save_property(
     latitud: Annotated[Optional[str], Form()] = None,
     longitud: Annotated[Optional[str], Form()] = None,
     ref_catastral: Annotated[Optional[str], Form()] = None,
+    referencia_interna: Annotated[Optional[str], Form()] = None,
     zona: Annotated[Optional[str], Form()] = None,
     fotos: List[UploadFile] = File(default=[]),
 ):
@@ -475,8 +476,8 @@ async def save_property(
             anio_construccion, eficiencia_energetica, orientacion, exterior_interior,
             gastos_comunidad, ibi, amenidades, descripcion_agente,
             titulo, descripcion_corta, descripcion_larga, copy_instagram, mensaje_whatsapp,
-            referencia, latitud, longitud, ref_catastral, zona
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            referencia, latitud, longitud, ref_catastral, zona, referencia_interna
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (
             tipo_propiedad, operacion, direccion, codigo_postal, ciudad, provincia,
             precio, superficie_construida, superficie_util, habitaciones, banos,
@@ -487,7 +488,7 @@ async def save_property(
             referencia,
             float(latitud) if latitud else None,
             float(longitud) if longitud else None,
-            ref_catastral, zona,
+            ref_catastral, zona, referencia_interna,
         ),
     )
     prop_id = cur.lastrowid
@@ -648,6 +649,7 @@ async def update_property(
     ibi: Annotated[Optional[str], Form()] = None,
     descripcion_agente: Annotated[Optional[str], Form()] = None,
     ref_catastral: Annotated[Optional[str], Form()] = None,
+    referencia_interna: Annotated[Optional[str], Form()] = None,
     zona: Annotated[Optional[str], Form()] = None,
     latitud: Annotated[Optional[str], Form()] = None,
     longitud: Annotated[Optional[str], Form()] = None,
@@ -666,7 +668,7 @@ async def update_property(
         "precio", "superficie_construida", "superficie_util", "habitaciones", "banos",
         "planta", "ascensor", "garaje", "garaje_incluido", "estado_vivienda",
         "anio_construccion", "eficiencia_energetica", "orientacion", "exterior_interior",
-        "gastos_comunidad", "ibi", "descripcion_agente", "ref_catastral", "zona",
+        "gastos_comunidad", "ibi", "descripcion_agente", "ref_catastral", "referencia_interna", "zona",
     ]
     local_vals = locals()
     updates, params = [], []

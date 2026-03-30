@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fotos = p.fotos || [];
       const fotosHTML = fotos.length
-        ? `<div class="modal-photos">${fotos.slice(0, 2).map(f => `<img src="${f}" alt="Foto">`).join('')}</div>`
+        ? `<div class="modal-photos">${fotos.slice(0, 2).map(f => `<img src="${f}" alt="Foto">`).join('')}</div>${fotos.length > 2 ? `<p style="font-size:12px;color:var(--text-muted);margin:6px 0 12px;text-align:center">+${fotos.length - 2} fotos más — ver en pestaña <strong>Fotos</strong></p>` : ''}`
         : '';
 
       const est = ESTADOS[p.estado] || ESTADOS.activo;
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="modal-tab-content active" id="tab-general-${p.id}">
           ${fotosHTML}
 
-          ${p.referencia ? `<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Ref: ${esc(p.referencia)}${p.ref_catastral ? ' · Cat: ' + esc(p.ref_catastral) : ''}</p>` : ''}
+          ${(p.referencia || p.referencia_interna || p.ref_catastral) ? `<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">${p.referencia ? 'Ref: ' + esc(p.referencia) : ''}${p.referencia_interna ? (p.referencia ? ' · ' : '') + '🏷️ ' + esc(p.referencia_interna) : ''}${p.ref_catastral ? ' · Cat: ' + esc(p.ref_catastral) : ''}</p>` : ''}
 
           <div class="modal-data-grid">
             <div class="modal-data-item">
@@ -1011,9 +1011,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <textarea name="descripcion_agente" rows="2">${esc(p.descripcion_agente || '')}</textarea>
           </div>
 
-          <div class="field">
-            <label>Ref. catastral</label>
-            <input type="text" name="ref_catastral" value="${esc(p.ref_catastral || '')}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="field">
+              <label>Referencia interna</label>
+              <input type="text" name="referencia_interna" value="${esc(p.referencia_interna || '')}" placeholder="Ej: P-001, LOCAL-5...">
+            </div>
+            <div class="field">
+              <label>Ref. catastral</label>
+              <input type="text" name="ref_catastral" value="${esc(p.ref_catastral || '')}">
+            </div>
           </div>
 
           <!-- Gestión de fotos -->
